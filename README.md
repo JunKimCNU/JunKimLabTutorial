@@ -370,8 +370,57 @@ reference	ref_start	ref_stop	ID	size	strand	type	ref_gap_size	query_gap_size	que
 - 그러니 **이상한 명령어 조합 또는 한참이나 돌아가는 명령어 조합을 쓰는 것을 결코 두려워하지 마세요.** 뭔 결과를 내든 여러분이 눈으로 들여다보는 것보다는 빠르고, 그렇게 삽질하다 보면 점점 좋은 방식으로 나아갈 수 있을 겁니다.
 - 물론 제 연구실 사람이라면 작성한 명령어 조합 등을 정리해서 보여주시길 바라겠습니다. 좀 더 효율적인 명령어 조합 등을 알려드리겠습니다. 또 박사과정 하다 보면 수십억 줄은 되는 데이터를 다루게 될 때도 있을 텐데요, 그런 데이터라면 제가 코드를 짜드리거나 스스로 짤 수 있도록 도와드릴 테니 걱정 안 해도 됩니다. 성장하는 데 집중하시길 바랍니다.
 
-- 이제 다시 이 BED 파일에 들어있는 정보들을 다뤄봅시다.
+- 이번에는 참조 유전체(reference genome)에 대해서도 간략하게 살펴봅시다. 참조 유전체란 특정한 생물 종의 DNA 정보를 고품질로 확보해둔 것입니다. 가장 초기에는 생어 시퀀싱 기법 등을 이용해서 제작했고, 한때는 숏리드 시퀀싱 기법을 이용해서 많이들 제작했지만, 요새는 거의 모든 사람들이 롱리드 시퀀싱 기법을 이용해 다양한 생물의 유전체 지도를 작성하고, 이를 참조 유전체로 활용하고 있습니다.
+- 먼저 예제 데이터를 다운 받아야 합니다. 다음 명령어를 입력해주시기 바랍니다.
+```
+wget -O ceN2.fa.gz https://downloads.wormbase.org/releases/WS289/species/c_elegans/PRJNA13758/c_elegans.PRJNA13758.WS289.genomic.fa.gz
+gzip -d ceN2.fa.gz
+```
+- 이 데이터는 다세포생물 중 가장 처음으로 유전체 지도가 완성된 생물인 예쁜꼬마선충(*Caenorhabditis elegans*)의 참조 유전체 데이터입니다. ```wget```은 웹에서 데이터를 다운 받을 때 많이 쓰는 명령어이고, ```gzip```은 압축하거나 압축 풀 때 쓰는 명령어입니다. 각각 ```-O```와 ```-d```가 붙어있는데, 이런 옵션들이 무슨 역할을 하는지는 "help" 페이지를 읽어보거나 해당 내용을 검색해서 공부해봅시다.
+- 파일을 다운 받았으니, 마찬가지로 ```ls -l``` 등을 이용해서 데이터 크기를 살펴봅시다. 매우 크니까 ```nano``` 같은 텍스트 에디터를 이용해서 ```ceN2.fa```라는 파일을 여는 것은 권하지 않습니다. 파일이 워낙 크다 보니 그대로 컴퓨터가 한동안 멈춰버릴 겁니다. ```less``` 등으로 파일을 열어보시기 바랍니다.
+- 그러면 DNA 정보가 FASTA 형식으로 쭉 적혀 있는 걸 볼 수 있을 겁니다. 참고로 파일 이름이 ```*.fa```로 되어있는데요, 이렇게 ```.fa```로 끝나는 파일은 FASTA 포맷이라는 걸 가리킵니다. FASTQ 포맷은 보통 ```*.fq``` 등으로 적혀 있습니다.
+- 파일 앞쪽을 ```head```를 이용해 열어 봅시다.
+```console
+어쩌구@저쩌구:~/01_parsing_matrix$ head ceN2.fa
+>I
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
+GCCTAAGCCTAAAAAATTGAGATAAGAAAACATTTTACTTTTTCAAAATTGTTTTCATGC
+TAAATTCAAAACGTTTTTTTTTTAGTGAAGCTTCTAGATATTTGGCGGGTACCTCTAATT
+```
+- 그러면 예쁜꼬마선충의 1번 염색체 왼쪽 끝에 담긴 서열 정보가 나타나게 됩니다. 이전에도 말씀 드렸듯 ```>``` 표시는 해당 서열의 이름이 그 줄에 나온다는 뜻이 되고, 여기서는 ```I```이 염색체의 이름이 됩니다. 앞쪽에는 ```GCCTAA```가 반복해서 나타나는데요, 이는 예쁜꼬마선충의 텔로미어 반복서열인 TTAGGC가 reverse complement되어있는 형태입니다. 보통 진핵생물의 유전체 지도가 염색체 수준으로 잘 완성돼 있다면, 이처럼 왼쪽 끝과 오른쪽 끝에 모두 텔로미어 반복서열이 cluster를 이루며 등장하게 됩니다.
+- 이번에는 이 파일을 이용해 염색체 정보를 뜯어보는 연습을 좀 더 해봅시다. 먼저 이 참조 유전체에 들어있는 염색체 또는 염색체의 일부 조각 개수가 얼마나 되는지 살펴보도록 합시다. 어렵지 않게 살펴볼 수 있는데요, FASTA 포맷에서는 모든 DNA 정보의 이름에 ```>```가 포함되어있기 때문입니다. 그러니 ```>```의 개수만 세면, 염색체나 기타 등등 DNA 조각이 몇 개나 있는지 알 수 있죠. 다음 명령어를 입력해봅시다.
+```console
+어쩌구@저쩌구:~/01_parsing_matrix$ grep ">" ceN2.fa
+>I
+>II
+>III
+>IV
+>V
+>X
+>MtDNA
+```
+- 그러면 위와 같이 DNA의 이름 정보가 쭉 출력될 겁니다. 참고로 예쁜꼬마선충은 상염색체를 5개, 성염색체를 1개, 미토콘드리아 염색체를 1개 지니고 있습니다. 각각 I, II, III, IV, V, X, MtDNA라는 이름이 붙어있고요.
+### 집중해주세요!
+- 여기서 한 가지 주의할 사항을 말씀 드리려고 합니다. ```>``` 문자를 사용할 때는, 이게 **리디렉션으로 인식될 수 있다**는 점을 반드시 주의하셔야 합니다. 컴퓨터에서 이 기호가 리디렉션으로 잘못 인식되면 **작업하려던 파일이 빈 파일이 되는 참사**가 일어날 수 있기 때문입니다.
+- 예를 들면 ```grep ">" ceN2.fa```라고 쳐야 하는데, 쌍따옴표를 빼먹어서 ```grep > ceN2.fa```라고 쳤다고 해봅시다. 이러면 ```>```가 ```grep```의 검색 대상이 아닌 리디렉션으로 인식되게 됩니다. ```grep```의 결과를 ```ceN2.fa```라는 파일 이름으로 저장하라는 명령어가 되는 셈이죠. 그리고 이렇게 되면 ```ceN2.fa``` 파일은 곧장 빈 파일이 되어버리게 됩니다.
+- 이유는 다음과 같습니다. ```grep > ceN2.fa```라는 명령어를 보면, 마치 앞에서부터 차례대로 실행될 거라고 생각하기 쉽습니다. 다시 말해 ```grep```으로 뭔가를 하려고 한 다음, 그 결과가 STDOUT으로 나오면 이를 STDIN으로 리디렉션해서 ```ceN2.fa```라는 파일에 저장하라는 식으로 말이죠. 이 경우라면 별 문제가 없을지도 모릅니다. 왜냐면 ```grep```은 각 행을 검색해서 우리가 검색하고 싶은 문자열이 있는지를 확인하는 명령어인데, ```grep > ceN2.fa```라는 명령어에서 ```>```가 리디렉션으로 인식됐다면 ```grep```에는 검색할 문자열도, 검색할 파일도 지정이 되지 않았으니 그냥 헬프 페이지를 띄우겠죠.
+- 문제는 이 **실행 순서가 정반대**로 일어난다는 데 있습니다. 요컨대 ```grep > ceN2.fa```라는 명령어가 실행되면, 일단 다짜고짜 ```ceN2.fa```라는 **빈 파일을 새로 생성**합니다. 그 다음에 ```grep```을 실행하죠. 그러면 짜잔! 분석하려던 데이터가 싹 날아가고 ```grep```은 헬프 페이지를 띄워줍니다.
+```console
+어쩌구@저쩌구:~/01_parsing_matrix$ grep > ceN2.fa
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+어쩌구@저쩌구:~/01_parsing_matrix$ cat ceN2.fa
+어쩌구@저쩌구:~/01_parsing_matrix$                  # 파일이 텅 비어서 아무것도 출력하지 않음.
+```
+- 분석하려던 파일이 쉽게 복구할 수 있는 것이라면 별 타격이 없겠지만, 몇날며칠 고생해서 정리해둔 데이터라면 진짜 피눈물 납니다. 조심 하시기 바랍니다.
 
+- 이번 단계에서 배워야 할 건 이 정도면 끝난 것 같습니다. 마찬가지로 [두 번째 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task02_parsing)를 한번 따라해보시면서 좀 더 익숙해지시길 바라겠습니다.
 
 
 
