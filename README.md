@@ -6,7 +6,6 @@
 - [행렬 데이터 다루기](#parsing)
 - [Conda를 이용한 프로그램 설치](#conda)
 - [시퀀싱 데이터 다루기 101](#how_to_handle_sequencing_data)
-- [염기서열을 다뤄보기-포맷 익히기](#atgc)
 
 ## <a name="wellcome_to_JunKimLabTutorial"></a> 튜토리얼을 시작하시는 걸 환영합니다
 
