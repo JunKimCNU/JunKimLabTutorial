@@ -1,5 +1,10 @@
+### 먼저 다음 명령어를 실행시켜서 예제 데이터를 다운 받도록 하자.
 ```
-다음 질문에 대해 답해보자
+wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task02_parsing/cb4856.substr.fa
+wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task02_parsing/lsp41_scaffolds.substr.fa
+```
+### 그 뒤 다음 질문에 대해 답해보자
+```
 (1) lsp41_scaffolds.substr.fa 에 포함된 contig 개수는?(힌트: 모든 contig는 > 로 시작하는 문장 다음에 염기서열 정보가 따라옴)
 (2) cb4856.substr.fa 파일에 포함된 contig 개수는?
 (3) cb4856.substr.fa 에 포함된 contig 이름은 "tig00015902|quiver|quiver|pilon|pilon" 등으로 되어있다. 여기서 |quiver|quiver|pilon|pilon 부분을 제거하고 싶다면 어떻게 해야 할까?
