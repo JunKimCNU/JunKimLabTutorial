@@ -13,8 +13,9 @@ cp
 mv
 ctrl + c
 ctrl + z
-ls *
+ls *    # 여기서 이 별(*) 문자를 wildcard라고 부름.
 ls *[0-9]
+ls {t,s}*
 head
 tail
 head -2
@@ -22,25 +23,25 @@ tail -3
 nano
 less
 vi
-vi [어떻게 vi 빠져나오나]
+vi  # 어떻게 vi 빠져나오는지도 기억해두기
 wc
 wc -l
 sort
 sort -r
 sort -rV
-| (pipe)
-> (redirection)
+|    # pipe
+>    # redirection
 cat
 grep
 grep --help
 grep -c
 grep ">"
-grep $">tig00000[0-9][0-9]"
 grep "^>"
 grep -w "II"
 awk
 awk --help
 awk '{print $2}'
+cut -f 2
 sed
 sed --help
 sed -n '3,7p'
