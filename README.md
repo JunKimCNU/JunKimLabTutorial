@@ -4,11 +4,9 @@
 - [대용량 시퀀싱 데이터에 대한 기본적인 이해](#basis_for_huge_sequencing_data)
 - [까만 바탕에 하얀 글씨-리눅스에서 작업 하기](#linux_tutorial)
 - [행렬 데이터 다루기](#parsing)
-- [참조 유전체 들여다보기](#reference_genome)
-- [1주차 숙제에 대한 간략하면서도 쓸데없이 긴 해설](#hw1_ans)
+- [Conda를 이용한 프로그램 설치](#conda)
 - [시퀀싱 데이터 다루기 101](#how_to_handle_sequencing_data)
 - [염기서열을 다뤄보기-포맷 익히기](#atgc)
-- [2주차 숙제에 대한 간략하면서도 쓸데없이 긴 해설](#hw2_ans)
 
 ## <a name="wellcome_to_JunKimLabTutorial"></a> 튜토리얼을 시작하시는 걸 환영합니다
 
@@ -302,7 +300,7 @@ directory1 directory2 test test2 sampleDirectory
 - 참고로 이 게임은 제가 만든 건 아니고요, 미국 해양연구소(Marine Biology Labs, 메사추세츠 우즈홀)에서 진행된 실습 과정에서 작성된 게임입니다. 정확히는 캘리포니아 대학 샌프란시스코에 계신 Stephan J Sanders 교수님께서 유닉스 강의를 하기 위해 고안하셨다고 하네요. 당시에 조교로 일하다가 지금은 [고려대학교에서 일하고 계신 안준용 교수님](https://joonanlab.github.io/)께서 한국으로 들여와주셨습니다. 다만 영어가 너무 복잡하고 어렵다 보니 한국어로 제가 번역했고, 조금씩 수정을 가했습니다.
 - 게임을 설치하고 싶다면 다음 명령어를 복사하고 터미널에 붙여넣기 하신 뒤 엔터 치시면 됩니다.
 ```
-mkdir treasure && cd treasure
+mkdir 01_treasureHunt && cd 01_treasureHunt
 wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task01_linux_tutorial/treasureHunt_v2_kor.pl
 perl treasureHunt_v2_kor.pl
 ```
@@ -325,8 +323,8 @@ cat Clue01_S.txt
 - 이번 단계의 목표는 ```awk```, ```grep```, ```sed```, ```sort``` 등 데이터를 다루는 데 필요한 다양한 명령어에 좀 더 익숙해지는 것입니다. 실제 유전체 및 생물학 데이터를 다뤄보면서 조금 더 익숙해져보도록 합시다.
 - 데이터 분석을 시작하려면 예제 파일을 다운 받아야 합니다. 다음 명령어를 실행해주시기 바랍니다.
 ```
-mkdir 01_parsing_matrix
-cd 01_parsing_matrix
+mkdir 02_parsing_matrix
+cd 02_parsing_matrix
 wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task02_parsing/Assemblytics_structural_variants.bed
 ```
 - 다운로드가 잘 됐다면 화면에 ```‘Assemblytics_structural_variants.bed’ saved [363093/363093]``` 같은 문구가 뜰 겁니다.
@@ -345,7 +343,7 @@ chr2	500	500	insertion	100
 - 이제부터는 이 구조 변이 정보를 담은 BED 파일을 자세하게 들여다보는 연습을 해보겠습니다.
 - 먼저 파일 형식에 대해 이해해봐야겠죠? 이 파일의 맨 첫 번째 줄에는 위 예제와 마찬가지로 각 열의 정보가 담겨있습니다. 이처럼 값이 아닌 정보를 담고 있는 행(row)을 헤더(header)라고 부릅니다. 헤더를 뽑는 명령어는 다음과 같이 쓸 수 있습니다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ head -1 Assemblytics_structural_variants.bed
+어쩌구@저쩌구:~/02_parsing_matrix$ head -1 Assemblytics_structural_variants.bed
 reference	ref_start	ref_stop	ID	size	strand	type	ref_gap_size	query_gap_size	query_coordinates	method
 ```
 - 각 구조 변이에 대한 정보는 각 행에 담기게 되는데, 한 행의 각 열에는 다음과 같은 정보가 담기게 됩니다. 하나의 구조 변이에 대해, 첫 번째 열에는 참조 유전체 기준 염색체 정보, 두 번째 열에는 그 염색체에서 구조 변이가 시작되는 위치, 세 번째 열에는 그 구조 변이가 끝나는 위치 등이 기본적으로 담기죠. 그리고 다섯 번째 열에는 그 구조 변이에 부여한 이름(ID)이, 여섯 번째 열에는 그 구조 변이의 크기(size)가 담기며, 방향(strand)과 유형(type) 같은 정보도 담기게 됩니다.
@@ -354,13 +352,13 @@ reference	ref_start	ref_stop	ID	size	strand	type	ref_gap_size	query_gap_size	que
 - 정답은 3,398개입니다. 헤더는 구조 변이 정보를 담고 있지 않으니 1개 빼야 한다는 걸 신경 써주세요.
 - 이 파일에 담겨 있는 구조 변이의 유형(type)은 뭐가 있는지도 알아보면 좋겠죠? 일곱 번째 열에 그 정보가 담겨 있을 겁니다. 그러면 일곱 번째 열을 뽑는 명령어를 활용해봅시다. 다양한 명령어가 있습니다만, 저는 주로 ```awk```를 활용하고 있습니다만, ```cut```을 이용해도 좋습니다. 3천 줄이나 화면에 출력되면 귀찮을 테니, ```head```를 이용해 앞에서 10개만 뽑아봅시다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ awk '{print $7}' Assemblytics_structural_variants.bed | head
-어쩌구@저쩌구:~/01_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed | head
+어쩌구@저쩌구:~/02_parsing_matrix$ awk '{print $7}' Assemblytics_structural_variants.bed | head
+어쩌구@저쩌구:~/02_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed | head
 ```
 - 위 두 명령어는 동일한 결과를 줄 겁니다. "type", "Insertion", "Deletion"이 마구 뒤섞인 결과를 말이죠. 이 열에 뒤섞여 있는 정보를 정렬하고, 중복되는 정보를 제거하면 전체 구조 변이 유형이 몇 종류나 있는지 알기 좋을 겁니다. 이럴 때는 ```sort```와 ```uniq```를 이용하면 좋습니다. 이때는 ```head```는 빼시면 되겠습니다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ awk '{print $7}' Assemblytics_structural_variants.bed | sort | uniq
-어쩌구@저쩌구:~/01_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed | sort | uniq
+어쩌구@저쩌구:~/02_parsing_matrix$ awk '{print $7}' Assemblytics_structural_variants.bed | sort | uniq
+어쩌구@저쩌구:~/02_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed | sort | uniq
 ```
 - 그러면 이 BED 파일에는 총 6가지 유형의 구조 변이가 있다는 걸 알 수 있을 겁니다. Deletion, Insertion, Repeat_contraction, Repeat_expansion, Tandem_contraction, Tandem_expansion이 그것이죠. 이런 식으로 데이터를 확인해볼 수 있는 겁니다.
 
@@ -381,7 +379,7 @@ gzip -d ceN2.fa.gz
 - 그러면 DNA 정보가 FASTA 형식으로 쭉 적혀 있는 걸 볼 수 있을 겁니다. 참고로 파일 이름이 ```*.fa```로 되어있는데요, 이렇게 ```.fa```로 끝나는 파일은 FASTA 포맷이라는 걸 가리킵니다. FASTQ 포맷은 보통 ```*.fq``` 등으로 적혀 있습니다.
 - 파일 앞쪽을 ```head```를 이용해 열어 봅시다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ head ceN2.fa
+어쩌구@저쩌구:~/02_parsing_matrix$ head ceN2.fa
 >I
 GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
 GCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAAGCCTAA
@@ -396,7 +394,7 @@ TAAATTCAAAACGTTTTTTTTTTAGTGAAGCTTCTAGATATTTGGCGGGTACCTCTAATT
 - 그러면 예쁜꼬마선충의 1번 염색체 왼쪽 끝에 담긴 서열 정보가 나타나게 됩니다. 이전에도 말씀 드렸듯 ```>``` 표시는 해당 서열의 이름이 그 줄에 나온다는 뜻이 되고, 여기서는 ```I```이 염색체의 이름이 됩니다. 앞쪽에는 ```GCCTAA```가 반복해서 나타나는데요, 이는 예쁜꼬마선충의 텔로미어 반복서열인 TTAGGC가 reverse complement되어있는 형태입니다. 보통 진핵생물의 유전체 지도가 염색체 수준으로 잘 완성돼 있다면, 이처럼 왼쪽 끝과 오른쪽 끝에 모두 텔로미어 반복서열이 cluster를 이루며 등장하게 됩니다.
 - 이번에는 이 파일을 이용해 염색체 정보를 뜯어보는 연습을 좀 더 해봅시다. 먼저 이 참조 유전체에 들어있는 염색체 또는 염색체의 일부 조각 개수가 얼마나 되는지 살펴보도록 합시다. 어렵지 않게 살펴볼 수 있는데요, FASTA 포맷에서는 모든 DNA 정보의 이름에 ```>```가 포함되어있기 때문입니다. 그러니 ```>```의 개수만 세면, 염색체나 기타 등등 DNA 조각이 몇 개나 있는지 알 수 있죠. 다음 명령어를 입력해봅시다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ grep ">" ceN2.fa
+어쩌구@저쩌구:~/02_parsing_matrix$ grep ">" ceN2.fa
 >I
 >II
 >III
@@ -412,23 +410,96 @@ TAAATTCAAAACGTTTTTTTTTTAGTGAAGCTTCTAGATATTTGGCGGGTACCTCTAATT
 - 이유는 다음과 같습니다. ```grep > ceN2.fa```라는 명령어를 보면, 마치 앞에서부터 차례대로 실행될 거라고 생각하기 쉽습니다. 다시 말해 ```grep```으로 뭔가를 하려고 한 다음, 그 결과가 STDOUT으로 나오면 이를 STDIN으로 리디렉션해서 ```ceN2.fa```라는 파일에 저장하라는 식으로 말이죠. 이 경우라면 별 문제가 없을지도 모릅니다. 왜냐면 ```grep```은 각 행을 검색해서 우리가 검색하고 싶은 문자열이 있는지를 확인하는 명령어인데, ```grep > ceN2.fa```라는 명령어에서 ```>```가 리디렉션으로 인식됐다면 ```grep```에는 검색할 문자열도, 검색할 파일도 지정이 되지 않았으니 그냥 헬프 페이지를 띄우겠죠.
 - 문제는 이 **실행 순서가 정반대**로 일어난다는 데 있습니다. 요컨대 ```grep > ceN2.fa```라는 명령어가 실행되면, 일단 다짜고짜 ```ceN2.fa```라는 **빈 파일을 새로 생성**합니다. 그 다음에 ```grep```을 실행하죠. 그러면 짜잔! 분석하려던 데이터가 싹 날아가고 ```grep```은 헬프 페이지를 띄워줍니다.
 ```console
-어쩌구@저쩌구:~/01_parsing_matrix$ grep > ceN2.fa
+어쩌구@저쩌구:~/02_parsing_matrix$ grep > ceN2.fa
 Usage: grep [OPTION]... PATTERNS [FILE]...
 Try 'grep --help' for more information.
-어쩌구@저쩌구:~/01_parsing_matrix$ cat ceN2.fa
-어쩌구@저쩌구:~/01_parsing_matrix$                  # 파일이 텅 비어서 아무것도 출력하지 않음.
+어쩌구@저쩌구:~/02_parsing_matrix$ cat ceN2.fa
+어쩌구@저쩌구:~/02_parsing_matrix$                  # 파일이 텅 비어서 아무것도 출력하지 않음.
 ```
 - 분석하려던 파일이 쉽게 복구할 수 있는 것이라면 별 타격이 없겠지만, 몇날며칠 고생해서 정리해둔 데이터라면 진짜 피눈물 납니다. 조심 하시기 바랍니다.
 
 - 이번 단계에서 배워야 할 건 이 정도면 끝난 것 같습니다. 마찬가지로 [두 번째 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task02_parsing)를 한번 따라해보시면서 좀 더 익숙해지시길 바라겠습니다.
 
+## <a name="conda"></a> Conda를 이용한 프로그램 설치
+- 지금까지 가장 기본적인 명령어들을 이용해서 커맨드라인과 간단한 행렬 데이터 처리에 익숙해지는 과정을 거쳤습니다. 이번 단계에서는 좀 더 본격적인 프로그램들을 사용하는 방법들에 대해 익혀봅시다.
+- 프로그램을 활용하는 데 있어서 가장 큰 걸림돌이 되는 것 중 하나는 설치가 쉽지 않았다는 점입니다. 하지만 이제는 [Conda](https://docs.conda.io/en/latest/)나 [Docker](https://www.docker.com/), [Singularity](https://sylabs.io/singularity/) 등 다양한 기법들이 개발되면서 프로그램 설치가 아주 쉬워졌습니다. 프로그램 설치까지만 되면 본인 데이터만 잘 활용해서 프로그램을 돌리기만 하면 끝나거든요. 우리가 할 일은 이런 기법들을 활용해 원하는 프로그램을 설치하고 그 프로그램을 잘 쓰는 수준이면 충분합니다.
+- 이러한 다양한 기법 중에 가장 보편적으로 쓰이는 프로그램 설치법 중 하나는 Conda입니다. Conda를 쓰면 프로그램마다 각자의 **환경**(environment)을 부여할 수 있는데, 이렇게 하면 프로그램들끼리 **충돌**하지 않고 쉽게 설치된다는 강력한 장점이 있습니다. 환경이랑 충돌이라는 게 뭔지는 이제부터 설명 드리겠습니다.
+- 이전에 프로그램들을 설치하기 어려웠던 이유는, 프로그램들마다 서로 다른 작동 환경을 필요로 했기 때문입니다. 환경이란 프로그램이 작동하기 위해 필요한 다양한 하위 프로그램, 라이브러리 등을 가리킨다고 보시면 됩니다. 2개 이상의 서로 다른 프로그램이 있어야 데이터 분석을 하는데, 그 두 프로그램들이 작동하는 환경이 서로 배타적이라면 2개 프로그램을 동시에 설치할 수 없었던 겁니다.
+- 분자생물학 실험으로 비유하자면 제한효소 2개를 써서 DNA를 잘라야 하는데, 이 2개의 제한효소를 작동시킬 수 있는 버퍼는 세상에 존재하지 않는 상황이랑 비슷합니다. 별 수 있나요? 실험을 나눠서 하든지 해서, 두 제한효소가 서로 다른 화학적 환경에서 작동하도록 하는 수밖에 없죠. 프로그램 설치도 이랬습니다.
+- 예를 들면 이런 겁니다. 프로그램 1은 라이브러리 A의 버전 1.9가 있어야 하는데, 프로그램 2는 라이브러리 A의 버전이 3.0은 되어야 한다고 생각해봅시다. 그러면 내 컴퓨터에 프로그램 1과 프로그램 2를 동시에 설치하려면, 라이브러리 A는 대체 어떤 버전을 써야 하는 걸까요? 라이브러리 A의 버전을 1.9로 맞추자니 프로그램 2를 쓸 수가 없고, 반대로 3.0으로 맞추면 프로그램 1을 쓸 수가 없는 문제가 생깁니다. 이런 문제 때문에 컴퓨터 안에 엄청나게 다양한 라이브러리를 버전마다 다 따로 설치하고, 프로그램마다 따로따로 라이브러리를 짝지어줘야 했는데, 이 작업이 보통 귀찮은 게 아니었습니다. 그러니 설치가 쉽지 않아 프로그램을 돌려보지도 못하고 포기하는 일이 부지기수였죠.
+- Conda는 이런 문제를 손쉽게 해결해줍니다. Conda를 활용하면 프로그램마다 서로 다른 환경을 부여해 각자에게 필요한 라이브러리 등을 짝지어주는 게 아주 쉬워집니다. 예를 들면 Conda를 활용하면, 환경 1을 만들어 라이브러리 A 버전 1.9와 프로그램 1을 설치하고, 동시에 같은 컴퓨터에 환경 2를 만들어 라이브러리 버전 3.0과 프로그램 2를 설치하는 게 **명령어 두 줄**이면 가능합니다. 엄청나게 편해진 거죠.
+- 그럼 지금부터 이 Conda를 서버에 설치하고, 이를 활용해 다양한 생물학 관련 프로그램들을 설치하는 과정을 한번 따라가봅시다. [Conda 홈페이지](https://docs.conda.io/en/latest/miniconda.html)에서 본인 운영체제에 맞는 걸 골라 다운로드 하고 설치해봅시다.
+- 저처럼 Ubuntu 운영체제를 사용한다면 다음 단계를 따르시면 됩니다. 다른 운영체제는 제가 안 해봐서 모르겠어요. 찾아보셔야 할 것 같습니다.
+```
+cd
+mkdir 03_conda && cd 03_conda
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh   # 인스톨러 다운로드
+bash Miniconda3-latest-Linux-x86_64.sh                                       # 인스톨러 실행. *.pl을 perl로 실행했던 것처럼, *.sh 파일은 bash로 실행하면 됩니다.
+```
+- 이렇게 하면 엔터 치고 약관 읽으라는 말이 나올 겁니다. 엔터를 치면서 내리시면 되고, 동의하시면 yes 치시면 됩니다.
+- 그 뒤 어디에 설치할지 설치 경로를 물어보는데, 원하는 곳 지정하시면 되겠습니다.
+- 마지막으로 Conda 실행에 필요한 초기 설정을 하겠냐고 물어보는데, yes 고르시면 됩니다.
+- 그러면 화면에 뭐가 엄청나게 뜰 겁니다. 터미널로 돌아오고 나면, 다음과 같이 입력하고 난 뒤 터미널이 변화하는지 확인하시면 됩니다.
+```console
+어쩌구@저쩌구:~/03_conda$ bash ~/.bashrc           # Conda 관련된 기본 환경을 작동시켜줌.
+(base) 어쩌구@저쩌구:~/03_conda$                   # 왼쪽에 (base)가 뜨면 성공
+```
+- 이제 Conda 설치가 끝났습니다. 쉽죠? 이제는 ```conda```라는 명령어를 활용할 수 있게 됐습니다. 마찬가지로 터미널에 다음과 같이 쳐서 헬프 페이지가 잘 나오는지 확인해봅시다.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ conda
+usage: conda [-h] [-V] command ...
+[후략]
+```
+- (base)라고 적힌 부분이 현재 작업 중인 Conda 환경의 이름을 보여주는 부분입니다. 현재 환경은 (base)라는 말 그대로 가장 기반이 되는 기본 환경이라는 뜻이 되겠습니다. 이후에 새로운 환경을 만들고 그 환경을 활성화시키면, 예를 들면 (assembly), (rnaseq) 등등으로 (base) 부분이 바뀌게 될 겁니다. 한 가지 작업만 더 해놓고 바로 새로운 환경을 만들어봅시다.
+- Conda가 잘 설치됐다면, 이번에는 Mamba를 설치할 차례입니다. Conda는 참 좋은 도구이지만 몇 가지 문제가 있는데요, 그 중 하나가 프로그램을 여러 개 동시에 설치하려고 하면 시간이 엄청나게 오래 걸리고 잘 안 된다는 점입니다. 이런 문제를 해결해주는 게 Mamba입니다. Mamba를 활용하면 다양한 프로그램이 아주 빠르게 설치됩니다.
+- 앞으로 더 자세하게 말씀 드리겠습니다만, 앞으로는 ```conda``` 명령어 대신 ```mamba``` 명령어를 쓰시면 됩니다.
+- Mamba를 설치하고 싶으시면 마찬가지로 [공식 홈페이지에서 알려주는 설치 방법](https://mamba.readthedocs.io/en/latest/installation.html)을 따르시면 됩니다. 2023년 7월 6일 현재에는 다음 명령어를 입력해서 Mamba를 설치할 수 있습니다. 중간에 y 한 번 눌러서 설치 진행해주세요.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ conda install -n base --override-channels -c conda-forge mamba 'python_abi=*=*cp*'
+[중략]
+(base) 어쩌구@저쩌구:~/03_conda$ mamba
+usage: mamba [-h] [-V] command ...
+[후략]
+```
+- 위에 보이는 것처럼 설치가 끝나면 이제 ```mamba```를 치기만 하면 헬프 페이지가 나오게 될 겁니다. 다음 명령어도 쳐줍시다.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ mamba init
+(base) 어쩌구@저쩌구:~/03_conda$ source ~/.bashrc
+```
+- 이제 모든 준비는 끝났습니다. 이제 새로운 환경을 만들어봅시다. 다음과 같이 명령어를 쳐주세요.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ mamba create -n basicGenomics
+```
+- 마찬가지로 설치하겠냐는 말이 나올 텐데 y 누르고 엔터 치면 됩니다. 환경이 새롭게 만들어졌습니다. 이제 이 환경을 활성화시켜봅시다.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ mamba activate basicGenomics
+(basicGenomics) 어쩌구@저쩌구:~/03_conda$ 
+```
+- 그러면 위에 보이는 것처럼, 왼쪽에 환경 이름을 보여주는 곳이 (basicGenomics)로 바뀌게 될 겁니다.
+- 이제 이 환경에서 새로운 프로그램들을 설치할 수 있고요, 설치가 끝나면 자유롭게 쓸 수 있습니다. 다음과 같이 명령어를 입력해줍시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/03_conda$ mamba install -c conda-forge -c bioconda assembly-stats samtools bioawk seqtk hisat2 bedtools bcftools bwa fastqc minimap2 hifiasm svim svim-asm busco
+# 참고: conda-forge 또는 bioconda는 다양한 프로그램이 공개돼있는 채널입니다. Mamba는 이러한 채널을 뒤져서 가장 적합한 프로그램들을 죄다 긁어모다 자동으로 내가 제공한 프로그램 리스트를 설치해줍니다.
+# 여기서 설치시킨 프로그램은 총 14개입니다(assembly-stats, samtools, bioawk, seqtk, hisat2, bedtools, bcftools, bwa, fastqc, minimap2, hifiasm, svim, svim-asm, busco).
+```
+- 이렇게 입력하고 나서 y를 치면 우리가 앞으로 분석에 쓸 프로그램이 **한번에** 그리고 **자동으로** 설치됩니다. 참 쉽죠? 제 서버에서는 **5.5초**만에 설치가 끝났네요.
+- 혹시 내가 쓰고 싶은 프로그램이 더 있다면 직접 검색해보시면 됩니다. 검색창에 "(프로그램이름) bioconda" 등으로 검색하면 "anaconda" 또는 "bioconda" 웹페이지가 나올 겁니다. 예를 들면 "bwa bioconda"라고 검색하시면 [이런 페이지](https://anaconda.org/bioconda/bwa)가 검색될 텐데요, 이 페이지에 적힌 설치 방법을 따라하시면 됩니다. 정확히는 ```conda install -c bioconda bwa```라고 적혀 있는데, 여기서 ```conda```만 ```mamba```로 바꿔주시면 됩니다. ```mamba install -c bioconda bwa``` 이런 식으로 말이죠.
 
+### 집중해주세요!
+- Conda의 또 다른 문제점은 **base 환경에 프로그램을 설치하다 보면 기존에 깔린 모든 conda 환경이 망가질 가능성이 존재한다**는 것입니다. 이렇게 되면 프로그램 싹 다 다시 설치해야 돼서 진짜 열받겠죠? 게다가 논문 쓰던 도중이라면 프로그램 버전이 바뀌지 않도록 신경 써야 하는데, 프로그램을 재설치하다 보면 버전까지 바뀔 수 있다 보니 정말정말 고통스러워질 수 있습니다. 논문 쓸 때는 프로그램 버전도 다 기록을 해줘야 하거든요.
+- 그러니 **새로운 프로그램을 설치하고 싶다면 반드시 새로운 환경을 먼저 생성합시다. 그 다음에 그 환경을 활성화시킨 뒤 새로운 프로그램을 설치하도록 합시다.** 그래야 인생이 피곤해지는 일을 덜 마주칠 수 있습니다.
 
-
-
-
-
-
-
-
-
+- 작업이 다 끝났다면 원래 환경으로 돌아가볼까요? 다음과 같이 진행해봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/03_conda$ mamba deactivate
+(base) 어쩌구@저쩌구:~/03_conda$
+```
+- 그러면 다시 원래 환경으로 돌아오게 될 겁니다.
+- 이번에는 새로운 환경에 다른 프로그램도 설치해봅시다.
+```console
+(base) 어쩌구@저쩌구:~/03_conda$ mamba create -n repeat
+(base) 어쩌구@저쩌구:~/03_conda$ mamba activate repeat
+(repeat) 어쩌구@저쩌구:~/03_conda$ mamba install -c conda-forge -c bioconda repeatmodeler
+```
+- 이제 또 다른 프로그램이 설치됐습니다. 이번에만 그런 건지는 모르겠지만, 저는 이 ```repeatmodeler```가 다른 프로그램과는 동시에 설치가 안 되더라고요. 이런 식으로 동시에 설치되지 않는 충돌이 벌어지더라도, 새로운 환경에 설치하면 아무 문제 없습니다. 아주 편한 세상입니다.
+- 이번 단계에서는 이 정도 하면 된 것 같습니다. 다음 단계부터는 이번에 설치한 다양한 프로그램들을 하나하나 써먹어봅시다.
