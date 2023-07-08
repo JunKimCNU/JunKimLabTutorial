@@ -5,6 +5,7 @@
 - [까만 바탕에 하얀 글씨-리눅스에서 작업 하기](#linux_tutorial)
 - [행렬 데이터 다루기](#parsing)
 - [Conda를 이용한 프로그램 설치](#conda)
+- [기본적인 프로그램 다뤄보기](#basic_programs)
 - [시퀀싱 데이터 다루기 101](#how_to_handle_sequencing_data)
 
 ## <a name="wellcome_to_JunKimLabTutorial"></a> 튜토리얼을 시작하시는 걸 환영합니다
@@ -507,3 +508,65 @@ usage: mamba [-h] [-V] command ...
 - 이제 또 다른 프로그램이 설치됐습니다. 이번에만 그런 건지는 모르겠지만, 저는 이 ```repeatmodeler```가 다른 프로그램과는 동시에 설치가 안 되더라고요. 이런 식으로 동시에 설치되지 않는 충돌이 벌어지더라도, 새로운 환경에 설치하면 아무 문제 없습니다. 아주 편한 세상입니다.
 - 이번 단계에서는 이 정도 하면 된 것 같습니다. 다음 단계부터는 이번에 설치한 다양한 프로그램들을 하나하나씩 써먹어봅시다.
 - 이번 단계 과제는 별 건 없습니다. [다음 질문](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task03_conda/README.md)을 읽고 답을 검색해서 알아둡시다.
+
+## <a name="basic_programs"></a> 기본적인 프로그램 다뤄보기
+- 이번 단계에서는 이전에 Conda를 이용해 설치한 다양한 프로그램들을 하나씩 다뤄봅시다.
+- 가장 먼저 써볼 프로그램은 [bioawk](https://github.com/lh3/bioawk)입니다. 시퀀싱과 관련된 다양한 데이터 포맷을 다룰 때 쓸 수 있는 프로그램이고, 유용한 기능이 많습니다. 먼저 다음과 같이 쳐봅시다.
+```console
+(base) 어쩌구@저쩌구:~$ mkdir 04_basic_programs && cd 04_basic_programs
+(base) 어쩌구@저쩌구:~/04_basic_programs$ bioawk
+bioawk: command not found
+```
+- 위에 보이는 것처럼, (base) 상태에서 ```bioawk```를 검색하면 프로그램이 작동하지 않습니다. 이전에 말씀 드렸듯, ```bioawk```를 설치한 건 (basicGenomics)라는 특정한 환경이기 때문입니다. 그러니 프로그램을 쓰기 전에 그 환경을 먼저 활성화시켜줘야겠죠. 다음과 같이 진행해봅시다.
+```console
+(base) 어쩌구@저쩌구:~/04_basic_programs$ mamba activate basicGenomics
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk
+usage: bioawk [-F fs] [-v var=value] [-c fmt] [-tH] [-f progfile | 'prog'] [file ...]
+```
+- 위에 보이는 것처럼 ```bioawk```의 사용법 정보가 나오면 성공입니다. Conda를 통해 제대로 설치가 됐다는 뜻이죠.
+- 이제 ```bioawk```를 이용하는 방법을 몇 가지 배워봅시다.
+- ```bioawk```는 기본적으로는 ```awk```와 거의 똑같이 돌아간다고 보시면 됩니다. 중요한 차이는 ```awk```가 행렬로 이뤄진 파일의 내용을 직접적으로 다룬다면, ```bioawk```는 **시퀀싱 관련 데이터를 행렬처럼 바꿔서 다룬다**는 것입니다. 조금 더 자세하게 설명 드리도록 하겠습니다.
+- 이전에 써본 것처럼, ```awk```는 행렬을 다룹니다. 각 행(row)에 있는 여러 열(column)에 대해 다양한 연산을 처리해서 그 결과를 보여주죠. 예를 들면 ```awk '{print $1}' file.txt```라는 명령어를 입력하면 첫 번째 열의 정보를 화면에 프린트해주고, ```awk '{print $23}' file.txt```라는 명령어를 입력하면 스물세 번째 열의 정보를 출력해주는 식입니다.
+- ```awk```는 어떤 파일을 집어넣든, 그 **파일의 내용을 행렬로 인식**해서 처리해주는데요, 보통 각 열을 구분하는 방식은 **필드 구분 문자**(field separator)를 중심으로 이뤄집니다. 기본적으로는 빈칸을 구분 문자로 인식하기 때문에 사람이 인식하는 것과 비슷하게 빈칸이 있으면 새로운 열이라고 인식하는 식이죠. 구분 문자를 직접 지정해줄 수도 있습니다. 예를 들면 ```awk -F "TT" '{print $1,$2,$3}'```라는 명령어를 입력하면, 스페이스건 탭이건 빈칸은 전부 무시하고 TT가 나올 때만 열로 구분해준 뒤, 1번 2번 3번 열의 정보를 출력해줍니다. 실제로 해봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ echo "ATTGCCTAATTCG" > awk.test1.txt
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ awk -F "TT" '{print $1,$2,$3}' awk.test1.txt
+A GCCTAA CG
+```
+- ```awk```는 이런 식으로, 우리가 입력해준 **구분 문자를 활용해 데이터를 행렬로 변환하고 처리**하는 것이죠.
+- ```bioawk```도 매우 비슷하게 작동합니다. ```awk```와 다른 점은, ```bioawk```는 **지정해준 포맷에 맞춰 데이터를 행렬로 변환하고 처리**해준다는 것입니다.
+- 예제의 결과를 들여다보면서 ```bioawk```가 작동하는 방식을 이해해봅시다. 다음과 같이 명령어를 입력해주세요.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ echo -e ">testSeqName1\nATTGCCTAATTCG\n>testSeqName2\nAAGTCGATCGATCG" > bioawk.test1.txt  # 간단한 FASTA 파일 생성
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ cat bioawk.test1.txt                                      # 파일 내용 확인
+>testSeqName1
+ATTGCCTAATTCG
+>testSeqName2
+AAGTCGATCGATCG
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{print $name}' bioawk.test1.txt         # FASTA 파일을 행렬로 변환해 "이름"에 대한 정보 추출
+testSeqName1
+testSeqName2
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{print $seq}' bioawk.test1.txt          # FASTA 파일을 행렬로 변환해 "서열"에 대한 정보 추출
+ATTGCCTAATTCG
+AAGTCGATCGATCG
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{print $qual}' bioawk.test1.txt         # FASTA 파일을 행렬로 변환해 "퀄리티"에 대한 정보 추출
+
+
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$
+```
+- 그러면 위와 같은 결과가 나올 겁니다. 기본적으로 ```bioawk```를 활용하려면, 내가 입력하는 파일을 어떤 포맷으로 인식해야 하는지를 ```bioawk```에게 알려줘야 합니다. 그게 ```-c fastx```라고 적힌 부분입니다. 이러면 내가 입력하는 파일 포맷이 FASTA 또는 FASTQ이니, 그에 맞게 처리해달라고 ```bioawk```에게 명령하는 셈이 됩니다. 이제 ```bioawk```는 입력 파일을 FASTA/Q 포맷에 맞춰서 적절하게 행렬로 변환해주죠. 그리고 각 열을 가리키는 것은 **name**, **seq**, **qual** 등이 되게 됩니다. (물론 현재 입력 파일은 FASTA 파일이라 퀄리티 정보는 없으니 해당 값은 처리되지 않습니다)
+```
+name seq qual
+testSeqName1 ATTGCCTAATTCG 
+testSeqName2 AAGTCGATCGATCG 
+```
+- 이렇게 행렬이 만들어진 뒤에는 ```awk```와 똑같이 작동하게 되는 겁니다. 몇 번째 컬럼이냐를 다루는 대신, 각 포맷에 해당하는 정보에 맞춰서 컬럼이 지정된다는 게 다를 뿐이죠. 더 많은 정보는 [공식 홈페이지](https://github.com/lh3/bioawk)나 다른 분들이 [만들어둔 매뉴얼](https://bioinformaticsworkbook.org/Appendix/Unix/bioawk-basics.html#gsc.tab=0)을 읽어보시면 확인 가능합니다.
+- 실제로 활용 예는
+
+
+
+
+
+
+
+
