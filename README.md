@@ -525,6 +525,7 @@ usage: bioawk [-F fs] [-v var=value] [-c fmt] [-tH] [-f progfile | 'prog'] [file
 ```
 - 위에 보이는 것처럼 ```bioawk```의 사용법 정보가 나오면 성공입니다. Conda를 통해 제대로 설치가 됐다는 뜻이죠.
 - 이제 ```bioawk```를 이용하는 방법을 몇 가지 배워봅시다.
+### Bioawk 활용하기
 - ```bioawk```는 기본적으로는 ```awk```와 거의 똑같이 돌아간다고 보시면 됩니다. 중요한 차이는 ```awk```가 행렬로 이뤄진 파일의 내용을 직접적으로 다룬다면, ```bioawk```는 **시퀀싱 관련 데이터를 행렬처럼 바꿔서 다룬다**는 것입니다. 조금 더 자세하게 설명 드리도록 하겠습니다.
 - 이전에 써본 것처럼, ```awk```는 행렬을 다룹니다. 각 행(row)에 있는 여러 열(column)에 대해 다양한 연산을 처리해서 그 결과를 보여주죠. 예를 들면 ```awk '{print $1}' file.txt```라는 명령어를 입력하면 첫 번째 열의 정보를 화면에 프린트해주고, ```awk '{print $23}' file.txt```라는 명령어를 입력하면 스물세 번째 열의 정보를 출력해주는 식입니다.
 - ```awk```는 어떤 파일을 집어넣든, 그 **파일의 내용을 행렬로 인식**해서 처리해주는데요, 보통 각 열을 구분하는 방식은 **필드 구분 문자**(field separator)를 중심으로 이뤄집니다. 기본적으로는 빈칸을 구분 문자로 인식하기 때문에 사람이 인식하는 것과 비슷하게 빈칸이 있으면 새로운 열이라고 인식하는 식이죠. 구분 문자를 직접 지정해줄 수도 있습니다. 예를 들면 ```awk -F "TT" '{print $1,$2,$3}'```라는 명령어를 입력하면, 스페이스건 탭이건 빈칸은 전부 무시하고 TT가 나올 때만 열로 구분해준 뒤, 1번 2번 3번 열의 정보를 출력해줍니다. 실제로 해봅시다.
@@ -561,10 +562,73 @@ testSeqName1 ATTGCCTAATTCG
 testSeqName2 AAGTCGATCGATCG 
 ```
 - 이렇게 행렬이 만들어진 뒤에는 ```awk```와 똑같이 작동하게 되는 겁니다. 몇 번째 컬럼이냐를 다루는 대신, 각 포맷에 해당하는 정보에 맞춰서 컬럼이 지정된다는 게 다를 뿐이죠. 더 많은 정보는 [공식 홈페이지](https://github.com/lh3/bioawk)나 다른 분들이 [만들어둔 매뉴얼](https://bioinformaticsworkbook.org/Appendix/Unix/bioawk-basics.html#gsc.tab=0)을 읽어보시면 확인 가능합니다.
-- 실제로 활용 예는
+- 그러면 ```bioawk```를 이용해 시퀀싱 데이터를 살짝 다뤄봅시다. 먼저 우리가 확보한 DNA 시퀀스의 길이를 측정해볼까요? 다음 명령어를 입력해주시면 됩니다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{print length($seq)}' bioawk.test1.txt
+13
+14
+```
+- 그러면 위와 같이 시퀀스의 길이를 출력해줄 겁니다. 말씀 드렸듯 ```-c fastx```는 우리가 분석하려고 넣은 인풋 파일이 FASTA/Q 포맷이라는 걸 가리키는 거고요, ```'{print length($seq)}'``` 부분이 시퀀스의 길이를 출력하라는 부분이 됩니다. ```print```는 말 그대로 출력하라는 것이며, 구체적으로는 ```length($seq)```, 즉 시퀀스($seq)의 길이(length함수)를 재서 그 값을 ```print```하라는 말이라고 보시면 되겠습니다. 참고로 ```length()```는 ```awk```에서도 특정 필드의 문자열 길이를 잴 때 똑같이 쓸 수 있습니다.
+- 다음으로는 DNA를 reverse complement해봅시다. 마찬가지로 함수를 이용하면 쉽게 작동하는데요, 다음과 같이 ```revcomp()``` 함수를 활용하면 쉽게 결과를 얻을 수 있습니다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{print revcomp($seq)}' bioawk.test1.txt
+CGAATTAGGCAAT
+CGATCGATCGACTT
+```
+- 이번에는 조금 더 어려운 걸 해봅시다. 간단한 조건문을 다뤄볼게요. 조건문이란 우리가 원하는 조건에 해당하는 데이터만 얻어낼 수 있도록 하는 기법이라고 보시면 됩니다. 예를 들면 길이가 시퀀스 길이가 20 bp 이상인 것만 출력하게 한다든지, 5 bp 이상 30 bp 미만만 출력하게 한다든지 할 수 있습니다. 다음 명령어를 입력해서 예제 데이터를 만들어 봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ echo -e ">testSeqName3\nAGTACGTCAGTCAGCTAGCTAGCTAGCATCGATCGATCGATCGATCGATCGAT\n>testSeqName4\nCAGTCGATCGATCAGTCAGTCAGCTAGT\n>testSeqName5\nAGTT" >> bioawk.test1.txt
+```
+- 조건문은 다음과 같이 활용할 수 있습니다. 20 bp 이상을 먼저 출력해볼까요.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{ if(length($seq)>=20){print ">"$name; print $seq} }' bioawk.test1.txt
+>testSeqName3
+AGTACGTCAGTCAGCTAGCTAGCTAGCATCGATCGATCGATCGATCGATCGAT
+>testSeqName4
+CAGTCGATCGATCAGTCAGTCAGCTAGT
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx 'length($seq)>=20{print ">"$name; print $seq}' bioawk.test1.txt
+>testSeqName3
+AGTACGTCAGTCAGCTAGCTAGCTAGCATCGATCGATCGATCGATCGATCGAT
+>testSeqName4
+CAGTCGATCGATCAGTCAGTCAGCTAGT
+```
+- 위와 아래에 넣은 조건문은 형태만 다를뿐 둘 다 같은 결과를 출력해줍니다. 여기서는 ```if()```라는 조건문을 활용했는데요, 이는 괄호 안에 들어있는 조건에 부합하는 경우(TRUE인 경우)에만 뒤에 나오는 중괄호 안의 명령을 실행합니다. 여기서는 ```length($seq)>=20```이라는 조건을 줬으니, 시퀀스의 길이가 20 이상인 경우에만 중괄호 안의 명령이 실행되겠죠. 중괄호 안에 들어있는 명령어는 시퀀스 데이터를 FASTA 포맷에 맞춰 출력하라는 명령어입니다. ```print ">"$name``` 부분은 먼저 ```>``` 문자 다음에 해당 시퀀스의 이름($name)을 출력하라는 말이 되죠. FASTA의 이름 양식을 맞춘 것입니다. 그 뒤에 나오는 ```;``` 표시는 엔터 치라는 뜻이 되고요, ```print $seq```은 시퀀스를 출력하라는 명령어가 됩니다. 즉 시퀀스 길이가 20 bp 이상인 경우에만 ```>시퀀스 이름```을 출력한 뒤 엔터 치고 나서 ```시퀀스```를 출력하게 되는 것입니다. 길이가 짧으면 아무런 명령어도 실행하지 않으니 출력되는 게 없습니다.
+- 이번에는 시퀀스 개수와 이 파일의 전체 시퀀스 길이를 확인하는 명령어를 살펴봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ bioawk -c fastx '{number+=1; sum+=length($seq)}END{print number,sum}' bioawk.test1.txt
+5	112
+```
+- 여기서 ```number+=1``` 부분은, 각 행(row)마다 ```number```라는 변수에 숫자 1을 계속 더하라는 뜻입니다. 계속 진행해서 파일 전체를 처리하고 나면 ```number```에는 전체 행의 숫자가 저장되겠죠. ```sum+=length($seq)```도 비슷합니다. 각 행마다 ```sum```이라는 변수에 각 시퀀스의 길이를 더 하라는 뜻이 됩니다. 파일 전체를 처리하고 나면 ```sum```에 전체 시퀀스 길이의 합이 저장될 겁니다. ```END```는 그 앞의 명령어를 먼저 파일 끝까지 처리하라는 의미이며, 다 끝나고 나면 ```END``` 뒤에 있는 명령어가 실행되게 됩니다. 뒤에 있는 명령어인 ```print number,sum```은, 이전까지 저장된 ```number```와 ```sum```이라는 변수에 저장된 값을 출력하라는 뜻입니다. 그러니 화면에 결과적으로 시퀀스 개수인 5와 전체 길이의 합인 112 (bp)가 출력되는 것이죠.
+- 이외에도 ```bioawk```를 이용해 다양한 데이터 처리를 손쉽게 진행할 수 있습니다. 위에서 언급한 [예제 페이지](https://bioinformaticsworkbook.org/Appendix/Unix/bioawk-basics.html#gsc.tab=0)에 들어가서 한번 따라해보셔도 좋습니다. 공식 홈페이지에는 별 내용이 없으니 참고하세요.
+### Seqtk 활용하기
+- 이번에는 다른 유용한 프로그램인 [seqtk](https://github.com/lh3/seqtk)도 한번 사용해봅시다. 참고로 ```bioawk```와 ```seqtk```는 모두 위대하신 Heng Li 선생님이 개발하셨습니다. 브로드 인스티튜트(Broad Institute) 방향으로 절하고 쓰시면 됩니다. 
+- 마찬가지로 다음과 같이 명령어를 입력해봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ seqtk
 
+Usage:   seqtk <command> <arguments>
+Version: 1.4-r122
 
+Command: seq       common transformation of FASTA/Q
+         size      report the number sequences and bases
+         comp      get the nucleotide composition of FASTA/Q
+         sample    subsample sequences
+         subseq    extract subsequences from FASTA/Q
+         fqchk     fastq QC (base/quality summary)
+         mergepe   interleave two PE FASTA/Q files
+         split     split one file into multiple smaller files
+         trimfq    trim FASTQ using the Phred algorithm
+[후략]
+```
+- 그러면 위와 같은 설명이 뜰 겁니다. 가장 중요한 건 "Usage" 부분인데요, 여기에 적힌 것처럼 ```seqtk <command> <arguments>```를 입력하면 이 프로그램을 활용할 수 있습니다. 이중 "<command>"는 화면에 출력된 것처럼 ```seq```, ```size```, ```comp``` 등을 가리키는데요, 이러한 커맨드는 ```seqtk```에 내장된 하위 분석 모듈이라고 보시면 됩니다. 이중 ```size```를 활용해보면서 연습해봅시다.
 
+```console
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ seqtk size
+Usage: seqtk size <in.fq>   # 인풋 파일로 FASTQ 파일을 넣으라는 뜻
+(basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ seqtk size bioawk.test1.txt
+5	112
+```
+- 어디서 많이 본 숫자죠? 이전에 ```bioawk```를 이용한 결과와 똑같은 결과가 나온 셈입니다. 지난번에도 말씀 드렸듯, 같은 결과에 도달하기 위한 방법은 무수히 많습니다. 어떻게든 정확한 답에만 도달하시면 대부분 문제 없습니다.
 
 
 
