@@ -651,4 +651,4 @@ Gaps = 0
 
 ## <a name="variant_calling"></a> 간단한 변이 추출 따라해보기
 
-
+[이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task05_variant_calling)
