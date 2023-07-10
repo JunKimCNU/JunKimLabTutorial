@@ -6,7 +6,7 @@
 - [행렬 데이터 다루기](#parsing)
 - [Conda를 이용한 프로그램 설치](#conda)
 - [기본적인 프로그램 다뤄보기](#basic_programs)
-- [시퀀싱 데이터 다루기 101](#how_to_handle_sequencing_data)
+- [간단한 변이 추출 따라해보기](#variant_calling)
 
 ## <a name="wellcome_to_JunKimLabTutorial"></a> 튜토리얼을 시작하시는 걸 환영합니다
 
@@ -649,6 +649,6 @@ Gaps = 0
 - N50은 나름 중요한 수치이니 좀 더 알아봅시다. 이는 유전체 조립(genome assembly) 과정에서 많이 쓰이는 수치인데요, 보통은 N50 길이가 길면 길수록 좋습니다. N50 값을 계산하는 방식은 다음과 같습니다. 먼저 DNA 리드의 겹치는 부분을 최대한 이어붙였을 때 모든 시퀀스를 가장 긴 것부터 나열한 뒤, 차례차례 그 길이를 더합니다. 그리고 그 길이의 합이 전체 길이의 합의 50%를 넘었을 때, 마지막으로 더한 시퀀스의 길이가 N50이 됩니다. 그리고 그 시퀀스가 몇 번째로 긴 시퀀스였는지가 ```N50 = 28, n = 2```에서 ```n =``` 부분에 적히게 되는 것입니다. 좀 더 자세한 내용은 다음 두 링크를 살펴보시면 되겠습니다. [위키피디아](https://en.wikipedia.org/wiki/N50,_L50,_and_related_statistics) [그림이 포함된 자료](https://www.molecularecologist.com/2017/03/29/whats-n50/)
 - 이제 이번 단계에서 배울 건 다 배운 것 같습니다. 마찬가지로 [이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task04_basic_programs)를 진행하면서 이러한 프로그램들에 익숙해져 봅시다.
 
-
+## <a name="variant_calling"></a> 간단한 변이 추출 따라해보기
 
 
