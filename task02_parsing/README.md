@@ -11,4 +11,6 @@ wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task02_p
 (4) (grep and/or wc 등을 활용) Assemblytics_structural_variants.bed 는 50 bp 이상의 structural variants에 관한 정보를 포함하는 tab으로 분리된 형식이다(tab-separated values; tsv). 2번 염색체에는 몇 개의 variant가 존재하는가? (힌트: grep -P "\t" or grep -w or grep "<>")
 (5) (grep and/or wc 등을 활용) 2번 염색체에 생긴 variant 중 insertion은 몇 개인가? (힌트: 7번째 컬럼 정보를 확인해보기)
 (6) (sort 및 head 활용) 이 중 가장 크기가 큰 구조 변이 15개에 대한 정보만 포함하는 파일을 만들어 보자.
+(첫 번째 힌트: sort는 기본적으로는 사전순으로 정렬하기 때문에, 567과 58이 있을 때 58이 더 크다고 판단함. 이런 걸 보완하는 옵션을 알아보자.
+두 번째 힌트: sort를 활용하면 몇 번째 컬럼을 기준으로 정렬할지도 정할 수 있으니 그 옵션을 활용해보자.)
 ```
