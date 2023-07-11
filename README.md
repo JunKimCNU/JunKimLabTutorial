@@ -659,8 +659,72 @@ Gaps = 0
 - 변이 추출은 기본적으로는 참조 유전체와 개개인의 DNA가 다른 부분을 찾아내는 과정입니다. 예를 들면 참조 유전체의 염색체 1번 48만 번째 위치가 A였는데, 어떤 사람은 그 자리가 엄마 염색체도 A, 아빠 염색체는 T라면, 이는 A/T 헤테로(heterozygous)라고 부릅니다. 다른 사람은 A/A 호모(homozygous)일 수도 있으며, 또 다른 사람은 T/T 호모일 수도 있죠. 이러한 정보를 얻어내는 과정이 위 3단계인 셈입니다.
 - 이러한 변이 추출을 하려면 가장 먼저 시퀀싱된 리드(read)를 처리해줘야 합니다. [이전](#basis_for_huge_sequencing_data)에 말씀 드렸듯 리드란 한번에 읽어낸 DNA 정보가 담겨있는 가장 작은 조각을 가리킵니다. 숏리드 시퀀싱이라면 보통 100 bp에서 200 bp 정도 길이의 DNA 서열 정보가 하나의 리드에 담기게 됩니다.
 - 보통은 변이 추출의 정확성을 높이기 위해 한 자리가 30번 정도 독립적으로 읽을 수 있도록 시퀀싱을 진행합니다. 사람은 이배체(diploid)다 보니 한 자리가 적어도 2회는 읽혀야 엄마한테 받은 염색체와 아빠한테 받은 염색체 정보를 정확하게 확인해줄 수 있겠죠. 또 유전체가 30억 염기쌍인 걸 감안하면, 우연히 특정한 위치는 다른 지역보다 2-3배 더 많이 읽히고, 또 다른 위치는 다른 지역보다 2-3배 더 적게 읽힐 수도 있습니다. 게다가 시퀀싱 자체에 오류가 생겨 A인 자리가 T, G, C 등으로 읽힐 수도 있을 테니, 오류가 생길 걸 감안해 3배 정도는 읽어줘야 그 오류를 보정할 수 있을 겁니다. 이러한 모든 경우를 감안해서 보통은 평균적으로 각 위치가 30회 정도 읽힐 수 있도록 시퀀싱을 진행합니다. 사람이라면 30억 염기쌍의 30배인 900억 염기쌍을 생산하는 겁니다. 이 정도면 변이 추출이 상당히 정확하게 진행될 수 있다는 것이 알려져 있기도 합니다.
-- 그리고 이렇게 많은 데이터가 있다 보니, DNA 길이가 짧다는 게 굉장히 큰 문제가 됩니다. 이 100개짜리 DNA 조각이 대체 **염색체 몇 번의 어느 위치에서 나온 DNA인지 알 수가 없다**는 문제가 생기기 때문입니다.
-
+- 그리고 이렇게 많은 데이터가 있다 보니, DNA 길이가 짧다는 게 굉장히 큰 문제가 됩니다. 각각의 100개짜리 DNA 조각이 대체 **염색체 몇 번의 어느 위치에서 나온 DNA인지 알 수가 없다**는 문제가 생기기 때문입니다.
+- 그렇기 때문에 숏리드 시퀀싱 데이터를 분석하는 과정에는 바로 이런 **DNA 조각의 제 위치를 찾아주는 일**이 굉장히 중요한 단계가 됩니다. 900억 염기쌍에 달하는 수 억 개의 DNA 조각의 위치를 찾아줘야 하는 일이니 엄청난 연산이 들어가야 하기도 합니다. 한 조각 한 조각 비슷한 위치를 검색해주는 일을 사람이 한다면 도저히 할 수 없는 일이겠지만, 컴퓨터를 이용하면 상당히 빠른 속도로 진행할 수 있습니다.
+- 게다가 이미 이런 일을 다루기 위한 다양한 프로그램들이 아주 오래 전부터 개발돼서 널리 쓰이고 있습니다. 가장 대표적인 프로그램인 [BWA 논문](https://academic.oup.com/bioinformatics/article/25/14/1754/225615)은 인용수가 4만 회에 육박합니다. 많은 사람들이 쓸 정도로 쓰기도 쉽습니다. 그래서 코딩을 할 필요도 없습니다. 우리가 할 일은 프로그램을 설치하고, 인풋 파일과 아웃풋 파일을 지정해 엔터만 쳐주면 됩니다. 설치도 이미 해놨으니 직접 돌려보기만 하면 되겠네요.
+- 이제부터 ```bwa```를 직접 사용해봅시다. 다음과 같이 명령어를 입력해주세요.
+```console
+(basicGenomics) 어쩌구@저쩌구:~$ mkdir 05_variant_calling && cd 05_variant_calling              # 새 폴더 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/wbcel235.mt.fa   # C. elegans 미토콘드리아 DNA에 대한 바로 가기 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s srr3440952.sub.1.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s srr3440952.sub.2.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ bwa index wbcel235.mt.fa                    # C. elegans 미토콘드리아 DNA를 인덱싱
+[bwa_index] Pack FASTA... 0.00 sec
+[bwa_index] Construct BWT for the packed sequence...
+[bwa_index] 0.00 seconds elapse.
+[bwa_index] Update BWT... 0.00 sec
+[bwa_index] Pack forward-only FASTA... 0.00 sec
+[bwa_index] Construct SA from BWT and Occ... 0.00 sec
+[main] Version: 0.7.17-r1188
+[main] CMD: bwa index wbcel235.mt.fa
+[main] Real time: 0.006 sec; CPU: 0.005 sec                                                    # 미토콘드리아 정도는 0.01초 안에 끝남
+```
+- 이렇게 입력하면 샘플 데이터를 현재 디렉토리에서 활용할 수 있게 되고, 참조 유전체(여기서는 미토콘드리아 DNA)에 대한 **인덱스** 정보가 생성됩니다. 생물학하는 사람들에게 인덱스가 뭔지 각 잡고 설명하려면 작은 책 한 권 필요한 수준이라 여기서 자세한 내용을 다루긴 어렵고요, **검색을 빠르게 하기 위한 준비 단계**라는 정도만 알고 계시면 됩니다.
+- 예를 들면 DNA 100개짜리 리드를 검색한다고 쳤을 때, 30억 염기쌍이나 되는 유전체의 처음부터 일일이 검색하면 속도가 매우 느리겠죠? 심지어 수 억 개의 리드를 매번 그렇게 검색한다고 치면 한도 끝도 없이 오랜 시간이 소요될 겁니다. 그렇기 때문에 다양한 프로그램은 처음부터 하나하나 검색하는 대신, 저마다 특정한 알고리즘을 활용해 이런 검색 과정을 매우 효율적으로 진행합니다. BWA는 [버로우즈-휠러 변환](https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform)이라는 방식을 활용하는데요, 관심 있으시면 읽어보셔도 좋을 것 같습니다.
+- 이렇게 인덱싱이 끝나고 나면 본격적인 검색 과정을 진행할 수 있는데요, 이 과정을 **매핑**(mapping)이라고 부릅니다. 참조 유전체에서 리드가 있어야 할 위치를 검색하고 제 위치를 알려주는 과정입니다. 다음과 같이 입력하면 결과를 얻을 수 있습니다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ bwa mem wbcel235.mt.fa srr3440952.sub.1.fq.gz srr3440952.sub.2.fq.gz > srr3440952.sub_to_wbcel235.mt.sam
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 20000 sequences (1956180 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 0, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] skip orientation FR as there are not enough pairs
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 20000 reads in 0.509 CPU sec, 0.509 real sec
+[main] Version: 0.7.17-r1188
+[main] CMD: bwa mem wbcel235.mt.fa srr3440952.sub.1.fq.gz srr3440952.sub.2.fq.gz
+[main] Real time: 0.562 sec; CPU: 0.563 sec                                        # 데이터가 작아서 0.5초면 끝남
+```
+- 그러면 매핑이 자동으로 끝납니다. 참 쉽죠? 아웃풋 파일은 [SAM (Sequence Alignment/Map) 포맷](https://academic.oup.com/bioinformatics/article/25/16/2078/204688)으로 저장돼 있는데요, 이에 대해서 간단하게 알아봅시다.
+- 아웃풋 파일인 ```srr3440952.sub_to_wbcel235.mt.sam```을 살펴봅시다. 먼저 ```wc -l``` 등으로 행(row) 수를 확인해봅시다. 이전 숙제를 마치셨다면 알겠지만, 이 아웃풋 파일은 인풋 파일들에 들어있는 리드 수보다 2줄이 추가돼 있습니다. ```@```로 시작하는 헤더 부분이 추가돼서 그렇습니다. 이 헤더에는 참조 유전체에 대한 간단한 정보와 실제로 입력한 명령어 등이 담기게 됩니다. 나중에 내가 무슨 버전 썼는지 까먹었더라도 이런 걸 활용하면 관련 정보를 추출할 수 있습니다.
+- 각 행에는 각 리드별 매핑 정보가 담겨 있습니다. 간단하게 설명 드리자면 1번 열에는 우리가 인풋으로 넣은 리드 이름이 적혀 있습니다. 보통 참조 유전체에 검색하는 대상을 쿼리(query)라고 불러서, 해당 열을 QNAME이라고 부르기도 합니다. 2번 열에는 FLAG 정보가 담겨 있는데요, 이는 각 리드가 어떻게 매핑되어있는지 알려주는 것입니다. 이는 이진법으로 적혀 있는데요, 예를 들면 77이라는 FLAG는 1+4+8+64로 쪼갤 수 있고, 각각은 다음과 같은 의미를 지닙니다.
+```
+1 = 조각 나있다
+4 = 이 조각은 매핑이 안 됐다
+8 = 다른 조각은 매핑 안 됐다
+64 = 이게 첫 번째 조각이다
+```
+- 3번 열에는 이 리드가 매핑된 참조 유전체의 염색체(또는 컨티그/스캐폴드)의 이름이 들어가게 되고, 4번 열에는 그 위치가, 5번 열에는 매핑이 얼마나 잘 됐는지 등의 정보가 담기게 됩니다.
+- 이외에도 다양한 정보가 담겨 있는데요, 자세한 설명은 [공식 홈페이지](https://samtools.github.io/hts-specs/)에 들어가신 뒤 [SAM 포맷에 대한 정보를 담고 있는 이 PDF](http://samtools.github.io/hts-specs/SAMv1.pdf) 파일을 열어서 읽어보시면 됩니다. 직접 프로그램을 개발하실 일이 있다면 이런 포맷에 대한 정보는 꼭 숙지해두시는 게 좋습니다.
+- 그런데 이 아웃풋 파일을 열어보시면 알겠지만, 매핑 안 된 리드가 맨 위에 나올 정도로 정돈이 안 돼 있다는 게 문제입니다. 이런 파일을 정렬해주는 프로그램도 이미 잘 갖춰져 있습니다. 다음과 같이 입력해봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ samtools sort srr3440952.sub_to_wbcel235.mt.sam -o srr3440952.sub_to_wbcel235.mt.sorted.sam
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$
+```
+- ```samtools```는 마찬가지로 4만 회 이상 인용된 정말 범용적인 프로그램입니다. 이전에 사용했던 ```seqtk```처럼 다양한 하위 프로그램 모듈이 내장돼 있으며, ```samtools sort```는 그 중 하나입니다. 이는 인풋 SAM 파일을 정렬해주며, 아웃풋 이름은 ```-o [아웃풋 파일 이름]```을 이용해서 지정할 수 있습니다.
+- 이제 정렬이 끝난 ```srr3440952.sub_to_wbcel235.mt.sorted.sam``` 파일을 살펴봅시다. 마찬가지로 행 수를 살펴보면 2줄이 추가된 걸 알 수 있는데요, 정렬 과정에서 헤더가 추가됐기 때문입니다. ```head``` 등을 이용해서 내용을 살펴보면, 정렬된 덕분에 결과가 다르게 출력되는 걸 확인할 수 있을 겁니다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ head -5 srr3440952.sub_to_wbcel235.mt.sorted.sam
+@HD     VN:1.6  SO:coordinate
+@SQ     SN:MtDNA        LN:13794
+@PG     ID:bwa  PN:bwa  VN:0.7.17-r1188 CL:bwa mem wbcel235.mt.fa srr3440952.sub.1.fq.gz srr3440952.sub.2.fq.gz
+@PG     ID:samtools     PN:samtools     PP:bwa  VN:1.17 CL:samtools sort -o srr3440952.sub_to_wbcel235.mt.sorted.sam srr3440952.sub_to_wbcel235.mt.sam
+SRR3440952.4460953      113     MtDNA   639     60      100M    =       639     0       AGATTATTTTTAAAATTTTCTTATGTTTTAGGGGAAATAATGTTTTTTTATTTTATGTGTTTTTCTGTTATTTCAAGAATCCTGGGTATGGTAGTTATAG    B/FFFFFFFFFFB<<BFBFFFFFFFFFFFFFFBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBB NM:i:0  MD:Z:100        MC:Z:100M       AS:i:100        XS:i:0
+```
+(QUIZ) 이번에는 처음 나오는 리드에 더 많은 정보가 기입돼 있는 걸 확인할 수 있을 겁니다. 어떤 의미인지 한번 생각해봅시다.
+- 이렇게 하면 매핑이 모두 끝난 겁니다. 실제로는 다양한 필터링을 거쳐야 하긴 하지만 그건 나중에 차근차근 배우시면 됩니다. 나중에 이런 결과의 의미를 파악하는 게 어려워서 그렇지, 프로그램을 돌리는 것 자체는 매우 쉽다는 걸 알 수 있을 겁니다. 그리고 많은 데이터 분석이 그렇습니다. 다양한 분석에 도전해보시길 바랍니다.
+- 이제 마지막 단계인 **콜링**을 진행해봅시다.
 
 
 [이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task05_variant_calling)
