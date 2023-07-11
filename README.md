@@ -723,8 +723,14 @@ Gaps = 0
 SRR3440952.4460953      113     MtDNA   639     60      100M    =       639     0       AGATTATTTTTAAAATTTTCTTATGTTTTAGGGGAAATAATGTTTTTTTATTTTATGTGTTTTTCTGTTATTTCAAGAATCCTGGGTATGGTAGTTATAG    B/FFFFFFFFFFB<<BFBFFFFFFFFFFFFFFBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBB NM:i:0  MD:Z:100        MC:Z:100M       AS:i:100        XS:i:0
 ```
 (QUIZ) 이번에는 처음 나오는 리드에 더 많은 정보가 기입돼 있는 걸 확인할 수 있을 겁니다. 어떤 의미인지 한번 생각해봅시다.
-- 이렇게 하면 매핑이 모두 끝난 겁니다. 실제로는 다양한 필터링을 거쳐야 하긴 하지만 그건 나중에 차근차근 배우시면 됩니다. 나중에 이런 결과의 의미를 파악하는 게 어려워서 그렇지, 프로그램을 돌리는 것 자체는 매우 쉽다는 걸 알 수 있을 겁니다. 그리고 많은 데이터 분석이 그렇습니다. 다양한 분석에 도전해보시길 바랍니다.
+- 이렇게 하면 매핑이 모두 끝난 겁니다. 실제로는 다양한 필터링을 거쳐야 하긴 하지만 그건 나중에 차근차근 배우시면 됩니다.
+- 이쯤 되면 이런 결과의 의미를 파악하는 게 어려워서 그렇지, 프로그램을 돌리는 것 자체는 매우 쉽다는 걸 알 수 있을 겁니다.
+- 수많은 시퀀싱 데이터 분석은 이처럼 표준화된 프로그램들을 기반으로 진행됩니다. 다른 분석도 생각 이상으로 무척 쉽습니다. 다양한 분석에 도전해보시길 바랍니다.
 - 이제 마지막 단계인 **콜링**을 진행해봅시다.
-
-
-[이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task05_variant_calling)
+```console
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ bcftools mpileup -f wbcel235.mt.fa srr3440952.sub_to_wbcel235.mt.sorted.sam | bcftools call -mv -Ov -o srr3440952.sub.calls.vcf
+```
+- 이것도 이렇게 진행하면 끝입니다. 그러면 [VCF 포맷](https://samtools.github.io/hts-specs/VCFv4.2.pdf)으로 파일이 만들어질 겁니다. 마찬가지로 긴 헤더와 실제 변이 데이터가 나와야 하는데요, 예제 데이터를 대충 만들었더니 결과가 안 나오네요. 다른 데이터 넣으면 마찬가지로 잘 돌아갑니다.
+(QUIZ) BCFtools도 마찬가지로 널리 쓰이는 프로그램 중 하나입니다. ```mpileup```, ```-f```, ```call```, ```-mv```, ```-Ov```, ```-o``` 등에 대해서 검색해서 알아봅시다.
+- 마지막으로 [이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task05_variant_calling)에 답해보면서 변이 추출 과정에 좀 더 익숙해져 봅시다.
+- 다음에는 이러한 변이들이 유전자에 어떻게 영향을 주는지 살펴보도록 하겠습니다.
