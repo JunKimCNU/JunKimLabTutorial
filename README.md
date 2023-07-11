@@ -330,10 +330,10 @@ cd 02_parsing_matrix
 wget https://raw.githubusercontent.com/JunKimCNU/JunKimLabTutorial/main/task02_parsing/Assemblytics_structural_variants.bed
 ```
 - 다운로드가 잘 됐다면 화면에 ```‘Assemblytics_structural_variants.bed’ saved [363093/363093]``` 같은 문구가 뜰 겁니다.
-- 이제 이 파일을 한번 들여다봅시다. 저는 보통 파일을 확인할 때는 ```ls -l```을 이용해 파일 크기를 체크하고, 너무 크면 아예 ```nano```는 쓸 생각을 하지 않습니다. 그 다음에는 ```head```로 먼저 파일의 첫 10개 줄을 화면에 출력해 살펴봅니다. 더 많은 데이터를 보고 싶다면 ```less```를 이용해 파일을 열어보고요. 순서대로 한번 쭉 따라하면서, ```Assemblytics_structural_variants.bed``` 파일을 들여다봅시다.
+- 이제 이 파일을 한번 들여다봅시다. 저는 보통 파일을 확인할 때는 ```ls -l```을 이용해 파일 크기를 체크하고, 너무 크면 아예 ```nano```는 쓸 생각을 하지 않습니다. 그 다음에는 ```head```로 먼저 파일의 첫 10개 줄을 화면에 출력해 살펴봅니다. 더 많은 데이터를 보고 싶다면 ```less```를 이용해 파일을 열어보고요. 순서대로 한번 쭉 따라하면서, ```Assemblytics_structural_variants.bed``` 파일을 들여다봅시다. ```cat```, ```less```, ```head``` 등으로 파일 내용을 간략하게 살펴보고 다음 단계 진행하시면 됩니다.
 - 살펴보셨나요? 들여다보면 알겠지만, 이 파일은 행렬(matrix) 형태를 이루고 있습니다. 각 열(column)과 열 사이를 나누는 기호는 탭(tab)입니다. 이처럼 탭으로 나뉜 파일 형식을 TSV (tab-separated values)라고 부릅니다.
 - 이 파일은 [BED](https://genome.ucsc.edu/FAQ/FAQformat.html)라는 생물학에서 굉장히 널리 쓰이는 포맷을 따르고 있기도 합니다. 이 BED 포맷은 다양한 정보를 담을 수 있는데요, **변이**(variant)에 대한 정보를 담아낼 때 아주 유용하게 쓰입니다. 기본적으로는 첫 번째 열에는 **염색체 이름**이, 두 번째 열에는 **그 염색체에서 시작되는 위치**가, 세 번째 열에는 **그 염색체에서 끝나는 위치**가, 그리고 나머지 열에는 다양한 정보가 기록되게 되어있고요, 이를 이용해 다양한 변이에 대한 정보를 효율적으로 담아낼 수 있습니다.
-- DNA가 잘려나가거나 끼어들어간 결손과 삽입 돌연변이 같은 경우를 예로 들어봅시다. 염색체 1번의 300 bp 지점부터 350 bp 지점까지 DNA가 잘렸고 염색체 2번은 500 bp 지점에 100 bp의 DNA가 추가로 끼어들어갔다고 쳐봅시다. 이는 예를 들면 다음과 같은 BED 포맷으로 저장될 수 있습니다.
+- DNA가 잘려나가거나 끼어들어간 결손과 삽입 돌연변이 같은 경우를 예로 들어봅시다. 염색체 1번의 300 bp 지점부터 350 bp 지점까지 DNA가 잘렸고 염색체 2번은 500 bp 지점에 100 bp의 DNA가 추가로 끼어들어갔다고 쳐봅시다. 이는 예를 들면 다음과 같은 BED 포맷으로 저장될 수 있습니다. ```Assemblytics_structural_variants.bed``` 파일에 담긴 내용보다는 훨씬 단순하지만, 이것도 엄연한 BED 포맷이라고 볼 수 있습니다.
 ```
 #chromosome	start	end	type	size
 chr1	300	350	deletion	50
