@@ -7,6 +7,7 @@
 - [Conda를 이용한 프로그램 설치](#conda)
 - [기본적인 프로그램 다뤄보기](#basic_programs)
 - [간단한 변이 추출 따라해보기](#variant_calling)
+- [변이가 주는 영향을 이해해보기](#snpeff)
 
 ## <a name="wellcome_to_JunKimLabTutorial"></a> 튜토리얼을 시작하시는 걸 환영합니다
 
@@ -443,7 +444,7 @@ bash Miniconda3-latest-Linux-x86_64.sh                                       # �
 - 마지막으로 Conda 실행에 필요한 초기 설정을 하겠냐고 물어보는데, yes 고르시면 됩니다.
 - 그러면 화면에 뭐가 엄청나게 뜰 겁니다. 터미널로 돌아오고 나면, 다음과 같이 입력하고 난 뒤 터미널이 변화하는지 확인하시면 됩니다.
 ```console
-어쩌구@저쩌구:~/03_conda$ bash ~/.bashrc           # Conda 관련된 기본 환경을 작동시켜줌.
+어쩌구@저쩌구:~/03_conda$ source ~/.bashrc           # Conda 관련된 기본 환경을 작동시켜줌.
 (base) 어쩌구@저쩌구:~/03_conda$                   # 왼쪽에 (base)가 뜨면 성공
 ```
 - 이제 Conda 설치가 끝났습니다. 쉽죠? 이제는 ```conda```라는 명령어를 활용할 수 있게 됐습니다. 마찬가지로 터미널에 다음과 같이 쳐서 헬프 페이지가 잘 나오는지 확인해봅시다.
@@ -734,3 +735,5 @@ SRR3440952.4460953      113     MtDNA   639     60      100M    =       639     
 (QUIZ) BCFtools도 마찬가지로 널리 쓰이는 프로그램 중 하나입니다. ```mpileup```, ```-f```, ```call```, ```-mv```, ```-Ov```, ```-o``` 등에 대해서 검색해서 알아봅시다.
 - 마지막으로 [이번 단계 과제](https://github.com/JunKimCNU/JunKimLabTutorial/tree/main/task05_variant_calling)에 답해보면서 변이 추출 과정에 좀 더 익숙해져 봅시다.
 - 다음에는 이러한 변이들이 유전자에 어떻게 영향을 주는지 살펴보도록 하겠습니다.
+
+## <a name="snpeff"></a> 변이가 주는 영향을 이해해보기
