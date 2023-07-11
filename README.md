@@ -364,6 +364,14 @@ reference	ref_start	ref_stop	ID	size	strand	type	ref_gap_size	query_gap_size	que
 어쩌구@저쩌구:~/02_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed | sort | uniq
 ```
 - 그러면 이 BED 파일에는 총 6가지 유형의 구조 변이가 있다는 걸 알 수 있을 겁니다. Deletion, Insertion, Repeat_contraction, Repeat_expansion, Tandem_contraction, Tandem_expansion이 그것이죠. 이런 식으로 데이터를 확인해볼 수 있는 겁니다.
+- 이전 단계의 과제를 열심히 하셨다면, 제가 여기서 열심히 쓴 ```|``` 요 기호의 역할에 대해 제대로 이해하고 계실 겁니다. 이 기호는 파이프(pipe)라고 부르는데요, 파이프는 리디렉션과 비슷하게 작동합니다. 다만 차이가 있긴 한데요, 리디렉션을 활용하면 이전 명령어의 표준 출력을 새로운 파일로 저장할 수 있었죠? 파이프를 이용하면 **이전 명령어의 표준 출력을 이 다음 명령어의 표준 입력으로** 바꿔주게 됩니다.
+- 예를 들어 봅시다. ```cut -f 7 Assemblytics_structural_variants.bed | sort | uniq```이라는 명령어는 파이프로 두 번 연결돼 있습니다. 이 명령어는 우리가 7번째 열(column)을 추출한 뒤(```cut -f 7``` 부분), 그 열에 있는 데이터를 정렬하고(```sort``` 부분), 이중 중복을 제거하는 것(```uniq```)을 목표로 할 때 쓸 수 있습니다. 물론 이를 다음과 같이 순서대로 진행할 수도 있습니다.
+```console
+어쩌구@저쩌구:~/02_parsing_matrix$ cut -f 7 Assemblytics_structural_variants.bed > tmp1 # 7번 열에 담긴 정보를 tmp1 파일에 저장함
+어쩌구@저쩌구:~/02_parsing_matrix$ sort tmp1 > tmp2                                     # 7번 열에 담긴 정보를 정렬해서 tmp2 파일에 저장함
+어쩌구@저쩌구:~/02_parsing_matrix$ uniq tmp2                                            # 7번 열에 담긴 정보를 정렬한 뒤 중복 결과를 제거함
+```
+- 그렇지만 이렇게 파일에 저장하고 다시 읽고, 새로운 명령어로 처리한 뒤 다시 저장하고 다시 또 읽는 과정은 생각보다 귀찮고 시간도 많이 걸립니다. 이럴 때 파이프를 이용해 3개의 명령어를 하나로 묶어버릴 수 있는 거죠. 이건 꽤 중요한 개념이니 꼭 기억해두시길 바랍니다.
 
 ### 집중해주세요!
 - 뜬금 없지만 여기서 정말 중요한 말씀을 드리고 싶은데요, 세상에는 동일한 결과를 내주는 수많은 명령어 조합, 코드 조합이 존재합니다. 그리고 생물학자로서 데이터를 다룰 때는 거의 모든 경우에, **뭔 삽질을 하든, 얼마나 돌아서 가든, 결과만 정확하다면 아무 문제가 없습니다**.
