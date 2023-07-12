@@ -815,9 +815,24 @@ java -Xmx8g -jar snpEff/snpEff.jar -v GRCh37.75 snpEff/examples/test.chr22.vcf >
 - ```nohup```을 이용하면 이런 문제가 애초에 일어나지도 않도록 막아줄 수 있습니다. ```nohup```을 이용해서 프로그램을 실행하면 내 컴퓨터가 꺼지든 서버랑 접속이 끊기든, 프로그램은 서버 안에서 계속 돌아가기 때문입니다. 그러니 정전처럼 서버 본체가 꺼지는 일이 발생하지 않는 이상 마음 편히 프로그램을 돌릴 수 있습니다. 아주 유용하죠.
 - 이런 ```nohup```을 제대로 활용하려면, 명령어 맨 끝에 ```&```를 붙여주면 가장 좋습니다. 그러면 이제 백그라운드(background)에서 프로그램이 실행되게 됩니다. 프로그램이 뒤에서 계속 실행되고 있다는 뜻인데요, 이렇게 프로그램이 백그라운드에서 실행되도록 하면 프로그램이 계속 돌아가든 말든 다시 터미널로 곧장 돌아오게 됩니다. 그러니 같은 터미널에서 계속 새로운 작업을 진행하는 게 가능하죠. 매우 유용합니다.
 - 이렇게 글을 읽는 사이에 아마 ```00_snpEff.sh```가 전부 돌아가서 결과를 내줬을 겁니다. 제대로 돌아갔는지 확인해보려면 엔터 한 번 쳐보세요. 화면에 ```[1]+	DONE		nohup bash 00_snpEff.sh``` 같은 내용이 뜰 겁니다. 만약 안 뜨면 아직도 돌아가고 있는 건데요, 이것도 확인하고 싶으면 ```ps```를 쳐봅시다. 화면에 현재 돌아가고 있는 프로그램들을 띄워주는 명령어인데, 만약 백그라운드에서 잘 돌아가고 있다면 여기에 뜰 겁니다.
-- 잘 돌아갔다면 3개 파일이 새로 만들어졌을 겁니다. ```ls```를 이용해서 확인해보시면 ```snpEff_genes.txt```, ```snpEff_summary.html```, ```test.chr22.ann.vcf``` 이 3개 파일이 만들어진 게 보일 겁니다. 이중 ```snpEff_summary.html``` 파일은 그래픽 기반으로 통계치 등을 보여주는 파일이라 보기 쉬울 겁니다.
-- ```snpEff_summary.html``` 파일을 서버에서 내 컴퓨터로 옮겨봅시다. MobaXterm을 쓰고 있다면, 화면 맨 왼쪽에 있는 노란색 지구(?) 모양을 클릭하시고, 그 아래쪽에 있는 "Follow terminal folder" 버튼을 클릭해서 체크 표시 해주세요. 그 다음에 터미널을 다시 클릭한 뒤 엔터를 치면 현재 디렉토리에 있는 정보를 보여줄 겁니다. 만약 안 된다면 ```pwd```를 쳐서 현재 디렉토리 위치를 복사하고, 왼쪽 위에 디렉토리 위치 적혀 있는 곳에 붙여넣기 하시면 이동할 겁니다.
+- 잘 돌아갔다면 4개 파일이 새로 만들어졌을 겁니다. ```ls```를 이용해서 확인해보시면 ```nohup.out```, ```snpEff_summary.html```, ```test.chr22.ann.vcf```, ```snpEff_genes.txt``` 이 4개 파일이 만들어진 게 보일 겁니다.
+- ```nohup.out```은 우리가 ```nohup```으로 작동시킨 ```bash 00_snpEff.sh``` 명령어의 로그(log)를 담고 있습니다. ```less``` 등으로 열어보면 ```snpEff.jar```가 실행되면서 남긴 다양한 정보가 담겨있다는 걸 알 수 있을 겁니다. 여기에는 어떤 참조 유전체가 쓰였는지, 거기에 유전자는 몇 개나 있는지 등등의 정보가 담겨 있습니다. 한번 어떤 게 있는지만 대충 살펴보시면 됩니다.
+- 다음으로 ```snpEff_summary.html``` 파일은 그래픽 기반으로 통계치 등을 보여주는 파일입니다. 좀 더 이해하기 쉬울 테니 이것도 한번 살펴봅시다.
+- 먼저 ```snpEff_summary.html``` 파일을 서버에서 내 컴퓨터로 옮겨봅시다. MobaXterm을 쓰고 있다면, 화면 맨 왼쪽에 있는 노란색 지구(?) 모양을 클릭하시고, 그 아래쪽에 있는 "Follow terminal folder" 버튼을 클릭해서 체크 표시 해주세요. 그 다음에 터미널을 다시 클릭한 뒤 엔터를 치면 현재 디렉토리에 있는 정보를 보여줄 겁니다. 만약 안 된다면 ```pwd```를 쳐서 현재 디렉토리 위치를 복사하고, 왼쪽 위에 디렉토리 위치 적혀 있는 곳에 붙여넣기 하시면 이동할 겁니다.
 - 그러면 현재 디렉토리에 있는 파일 중 ```snpEff_summary.html``` 파일이 보일 텐데요, 이걸 바탕 화면 등으로 드래그 하시면 파일이 자동으로 복사됩니다. 쉽죠?
 - 맥이나 다른 리눅스 기반 컴퓨터를 써서 서버에 접속하고 있다면 터미널에서 빠져나간 뒤 ```scp -rP 포트번호 본인서버아이디@서버아이피:디렉토리위치/파일이름 .```을 치시면 서버에 있는 파일이 현재 디렉토리로 복사됩니다.
 - 그러곤 방금 파일 복사한 디렉토리로 이동한 다음 마우스로 더블 클릭해서 ```snpEff_summary.html``` 파일을 여시면 됩니다. 그러면 다양한 통계치와 의미 있는 숫자 같은 것들을 보여줄 거예요. 편하게 보시면 됩니다.
 - 이제 다시 터미널로 돌아와서 SnpEff가 내놓은 다른 아웃풋 파일들도 내용을 한번 확인해봅시다.
+- 먼저 ```test.chr22.ann.vcf``` 파일을 열어봅시다. 이 파일은 기본적으론 인풋으로 넣었던 ```test.chr22.vcf``` 파일에 담긴 변이 정보를 거의 동일하게 담고 있는데요, 마지막 열(column)인 INFO에 새로운 정보가 추가돼 있습니다. 새롭게 추가된 이 정보는 **각 변이가 다양한 유전자에 끼치는 영향**에 대해 정리해놓은 것입니다. 이를 활용해서 다양한 분석을 할 수 있습니다만, 내용이 너무 많아서 쉽게 다루기는 어려울 겁니다. 이 파일에는 어떤 내용이 들어있는지 한번 훑어보는 정도로만 살펴보시면 됩니다.
+- 마지막 파일인 ```snpEff_genes.txt```는 꽤 유용하고 직관적입니다. 이 파일에는 **개별 유전자가 다양한 변이에 어떻게 영향을 받고 있는지**에 대한 정보가 담겨 있습니다. 다음 명령어를 활용해 살펴봅시다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/06_snpeff$ head -3 snpEff_genes.txt
+# The following table is formatted as tab separated values. 
+#GeneName	GeneId	TranscriptId	BioType	variants_impact_HIGH	variants_impact_LOW	variants_impact_MODERATE	variants_impact_MODIFIER	variants_effect_3_prime_UTR_variant	variants_effect_5_prime_UTR_premature_start_codon_gain_variant	variants_effect_5_prime_UTR_variant	variants_effect_conservative_inframe_deletion	variants_effect_conservative_inframe_insertion	variants_effect_disruptive_inframe_deletion	variants_effect_disruptive_inframe_insertion	variants_effect_downstream_gene_variant	variants_effect_frameshift_variant	variants_effect_intron_variant	variants_effect_missense_variantvariants_effect_non_coding_transcript_exon_variant	variants_effect_splice_acceptor_variant	variants_effect_splice_donor_variant	variants_effect_splice_region_variant	variants_effect_start_lost	variants_effect_stop_gained	variants_effect_stop_lost	variants_effect_stop_retained_variant	variants_effect_synonymous_variant	variants_effect_upstream_gene_variant
+A4GALT	ENSG00000128274	ENST00000249005	protein_coding	1	10	9	32	1	1	0	0	0	0	0	1	0	90	0	0	0	0	0	0	0	9	0
+```
+- 그러면 위와 같이 엄청 긴 정보가 나오는데요, 첫 번째 행(row)에 적혀 있듯 기본적으로 이 파일은 TSV 포맷으로 구성돼 있다는 걸 알 수 있습니다. 두 번째 행에는 각 열(column)이 어떤 영향을 주는 변이에 대한 값인지 그 의미가 적혀 있습니다. 그리고 세 번째 행부터는 실제 유전자에 대해 각 값을 보여주고 있죠.
+- 이중 가장 많이 쓰이고 유용한 열은 1번부터 7번 열까지 담겨있는 정보들입니다. 이는 유전자의 이름뿐만 아니라 각 유전자에 영향을 주는 변이가 얼마나 강하게 영향을 주고 있는지, 그에 해당하는 변이의 개수는 몇 개나 되는지에 대한 정보를 담고 있죠. 여기서는 그 영향을 **Impact**라고 표현하고 있으며, 그 정도에 따라 high, low, moderate, modifier 등으로 분류하고 있습니다. 각각에 해당하는 영향을 좀 더 자세히 살펴보고 싶으시다면 [공식 홈페이지](https://pcingola.github.io/SnpEff/se_inputoutput/#eff-field-vcf-output-files)를 들여다보시면 좋을 것 같습니다.
+- 이처럼 유전자별로 영향 받은 정도를 활용하여, 유전자가 개개인에게서 얼마나 망가져있을지 등을 추정할 수 있습니다.
+- 예를 들어 유전병 환자와 비-환자 집단을 수백 명씩 모으고 시퀀싱했다고 생각해봅시다. 이렇게 시퀀싱한 개개인이 지닌 변이는 한 사람만 수백만 개일 테니 이런 과정을 통해서 확보한 유전 변이만 해도 수천만에서 수억 개에 이를 수 있겠죠.
+- 이렇게 많은 것 중 유전병이 원인이 되는 변이가 대체 무엇인지 어떻게 알 수 있을까요? SnpEff처럼 단백질이 영향 받은 정도를 추정할 수 있다면, 이러한 변이의 수를 극도로 줄일 수 있습니다. 예를 들면 high impact처럼 단백질을 크게 뒤바꾸는 변이에 집중할 수 있기 때문입니다. 이렇게 필터링을 거치면 분석이 더 단순해질 수 있는 겁니다.
