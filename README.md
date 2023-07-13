@@ -680,6 +680,11 @@ Gaps = 0
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/wbcel235.mt.fa   # C. elegans 미토콘드리아 DNA에 대한 바로 가기 형성
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/srr3440952.sub.1.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/srr3440952.sub.2.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
+# 참고로 여기서 바로가기가 잘 생성돼 있다면 파일 이름이 파란색 등으로 표시됩니다. ls 등을 이용해 확인해주세요.
+# 파일 이름이 빨간색이라면 바로가기가 형성되지 않은 겁니다.
+# 새로 바로가기를 형성하려면 이 빨간색 파일들을 rm으로 삭제한 뒤 진행해주세요.
+# 혹시 이전 단계에서 srr3440952.sub.1.fq.gz 및 srr3440952.sub.2.fq.gz 파일 압축 풀었다면,
+# 이번 기회에 gzip 등을 이용해서 압축하는 걸 진행해보시길 바랍니다. 아니면 bwa의 인풋 파일 이름을 바꿔주셔도 됩니다.
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ bwa index wbcel235.mt.fa                    # C. elegans 미토콘드리아 DNA를 인덱싱
 [bwa_index] Pack FASTA... 0.00 sec
 [bwa_index] Construct BWT for the packed sequence...
