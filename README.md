@@ -678,8 +678,8 @@ Gaps = 0
 ```console
 (basicGenomics) 어쩌구@저쩌구:~$ mkdir 05_variant_calling && cd 05_variant_calling              # 새 폴더 형성
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/wbcel235.mt.fa   # C. elegans 미토콘드리아 DNA에 대한 바로 가기 형성
-(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s srr3440952.sub.1.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
-(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s srr3440952.sub.2.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/srr3440952.sub.1.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
+(basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ ln -s ../04_basic_programs/srr3440952.sub.2.fq.gz                # C. elegans 숏리드 시퀀싱 데이터에 대한 바로 가기 형성
 (basicGenomics) 어쩌구@저쩌구:~/05_variant_calling$ bwa index wbcel235.mt.fa                    # C. elegans 미토콘드리아 DNA를 인덱싱
 [bwa_index] Pack FASTA... 0.00 sec
 [bwa_index] Construct BWT for the packed sequence...
