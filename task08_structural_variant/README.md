@@ -1,10 +1,11 @@
 - 다음 명령어를 입력해 예제 데이터를 다운 받도록 하자
 ```
+mkdir 08_structural_variant && 08_structural_variant
 wget -O ceN2.fa.gz https://downloads.wormbase.org/species/c_elegans/PRJNA13758/sequence/genomic/c_elegans.PRJNA13758.current.genomic.fa.gz
 gzip -dk ceN2.fa.gz
 samtools faidx ceN2.fa
-ln -s ../07_assembly/chr3/chr3.fa
-ln -s ../07_assembly/chr3Read.fq
+ln -s ../path_to_your_chr3.fa
+ln -s ../path_to_your_chr3Read.fq
 ```
 
 - ```svim```을 이용해 리드 기반의 구조 변이 분석 기법을 익혀보자. [SVIM 위키](https://github.com/eldariont/svim/wiki)에 적혀 있는 정보를 읽어본 뒤, ```ceN2.fa```를 참조 유전체로, ```chr3Read.fq```를 쿼리로 삼아 구조 변이 정보를 확보해보자. (가장 기본적인 명령어를 활용하면 되고, 한 줄이면 됨)
