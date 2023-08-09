@@ -1,6 +1,6 @@
 - 다음 명령어를 입력해 예제 데이터를 다운 받도록 하자
 ```
-mkdir 08_structural_variant && 08_structural_variant
+mkdir 08_structural_variant && cd 08_structural_variant
 wget -O ceN2.fa.gz https://downloads.wormbase.org/species/c_elegans/PRJNA13758/sequence/genomic/c_elegans.PRJNA13758.current.genomic.fa.gz
 gzip -dk ceN2.fa.gz
 samtools faidx ceN2.fa
