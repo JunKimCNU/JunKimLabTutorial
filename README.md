@@ -797,9 +797,14 @@ LICENSE.md	examples/	galaxy/	snpEff.config	SnpSift.jar	exec/	scripts/	snpEff.jar
 ```
 - 이건 가장 기본적인 VCF 파일입니다. 첫 번째 행(row)에는 헤더 정보가 적혀 있고요, 그 다음 행부터는 1번 열(column)에는 염색체 이름, 2번 열에는 변이가 존재하는 위치, 3번 열에는 변이의 이름(없을 경우엔 ```.```으로 표시)이 표시됩니다. 그리고 4번 열에는 참조 유전체의 시퀀스(REF)가, 5번 열에는 새로 시퀀싱해서 이 참조 유전체와 비교했을 때 차이가 나는 경우 그 서열(ALT)이 적히게 됩니다(같은 경우에도 적힐 수 있긴 함). 예를 들어 두 번째 행에 담긴 정보는, 참조 유전체의 염색체 22번 17,071,756 bp에는 T가 있는데, 새로 시퀀싱한 사람은 그 자리가 C로 바뀌어있다는 뜻이 되겠습니다.
 - VCF 포맷을 활용하면 시퀀싱 데이터 결과를 엄청나게 압축할 수 있습니다. DNA 시퀀싱 데이터로 따지면 한 사람당 900억 염기쌍의 데이터가 생산되지만, VCF 포맷을 활용하면 보통은 이중 **변이가 있는 위치**만 데이터가 담기게 되기 때문입니다. 예를 들면 보통 사람과 사람을 비교하면 수백만 개의 변이가 존재하는데요, 900억 개를 수백만 개로 줄일 수 있다면 1만 분의 1 수준으로 데이터를 줄일 수 있는 셈이죠. 매우 유용하게 활용할 수 있습니다.
+- 2023.08.22 기준, database download가 되질 않습니다. snpEff에서 관리하던 링크가 깨졌네요. 다음과 같이 진행하면 됩니다.
+```console
+(basicGenomics) 어쩌구@저쩌구:~/06_snpeff/snpEff/examples$ cd ../
+(basicGenomics) 어쩌구@저쩌구:~/06_snpeff/snpEff$ wget https://snpeff.blob.core.windows.net/databases/v5_0/snpEff_v5_0_GRCh37.75.zip && unzip snpEff_v5_0_GRCh37.75.zip
+```
 - 이제 이러한 변이가 유전자에 끼치는 영향을 실제로 확인해보도록 합시다. 먼저 초기 디렉토리로 이동해봅시다.
 ```console
-(basicGenomics) 어쩌구@저쩌구:~/06_snpeff/snpEff/examples$ cd ../../
+(basicGenomics) 어쩌구@저쩌구:~/06_snpeff/snpEff$ cd ../
 (basicGenomics) 어쩌구@저쩌구:~/06_snpeff$
 ```
 - 그 뒤 ```nano```를 활용해 ```00_snpEff.sh```라는 새로운 텍스트 파일을 열어준 뒤, 다음 내용을 입력하고 저장해봅시다.
