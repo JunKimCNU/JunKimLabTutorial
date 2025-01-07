@@ -638,7 +638,7 @@ Command: seq       common transformation of FASTA/Q
          trimfq    trim FASTQ using the Phred algorithm
 [후략]
 ```
-- 그러면 위와 같은 설명이 뜰 겁니다. 가장 중요한 건 "Usage" 부분인데요, 여기에 적힌 것처럼 ```seqtk <command> <arguments>```를 입력하면 이 프로그램을 활용할 수 있습니다. 이중 "<command>"는 화면에 출력된 것처럼 ```seq```, ```size```, ```comp``` 등을 가리키는데요, 이러한 커맨드는 ```seqtk```에 내장된 하위 분석 모듈이라고 보시면 됩니다. 이중 ```size```를 활용해보면서 연습해봅시다.
+- 그러면 위와 같은 설명이 뜰 겁니다. 가장 중요한 건 "Usage" 부분인데요, 여기에 적힌 것처럼 ```seqtk <command> <arguments>```를 입력하면 이 프로그램을 활용할 수 있습니다. 이중 "Command"는 화면에 출력된 것처럼 ```seq```, ```size```, ```comp``` 등을 가리키는데요, 이러한 커맨드는 ```seqtk```에 내장된 하위 분석 모듈이라고 보시면 됩니다. 이중 ```size```를 활용해보면서 연습해봅시다.
 
 ```console
 (basicGenomics) 어쩌구@저쩌구:~/04_basic_programs$ seqtk size
